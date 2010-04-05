@@ -15,7 +15,11 @@ class TableFu(object):
 
 
 class Row(object):
-    pass
+    """
+    A row in a table
+    """
+    def __init__(self, table, cells):
+        pass
 
 class Datum(object):
     pass
