@@ -11,7 +11,15 @@ import urllib2
 
 
 class TableFu(object):
-    pass
+    """
+    A table, to be manipulated like a spreadsheet.
+    
+    TableFu reads in an CSV open file (can also be a URL),
+    parsing it into a table property, Row and Datum objects.
+    """
+    def __init__(self, csv_file, **options):
+        reader = csv.reader(csv_file)
+        self.table = [row for row in reader]
 
 
 class Row(object):
