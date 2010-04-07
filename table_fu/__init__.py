@@ -27,7 +27,7 @@ class TableFu(object):
     Nicholson Baker,Mezannine,150,Minimalism
     Vladimir Sorokin,The Queue,263,Satire
     
-    >>> spreadsheet = TableFu(open('test.csv'))
+    >>> spreadsheet = TableFu(open('../tests/test.csv'))
     >>> len(spreadsheet.rows)
     4
     >>> spreadsheet.columns
@@ -39,16 +39,37 @@ class TableFu(object):
     def __init__(self, csv_file, **options):
         reader = csv.reader(csv_file)
         self.table = [row for row in reader]
-        self.column_headers = options.get('columns', None) or self.table[0]
+        self.default_columns = self.table.pop(0)
+        self._columns = []
         self.deleted_rows = []
         self.options = options
+
+    def __getitem__(self, row_num):
+        """
+        Return one row in the table
+        """
+        return Row(self.table[row_num], row_num, self)
+
+    def __len__(self):
+        return len(self.table[1:])
 
     def add_rows(self, *rows):
         for row in rows:
             self.table.append(row)
 
+    @property
     def rows(self):
-        return [Row(row, i, self) for i, row in enumerate(self.table[:1])]
+        return [Row(row, i, self) for i, row in enumerate(self.table[1:])]
+
+    def _get_columns(self):
+        if self._columns:
+            return self._columns
+        return self.default_columns
+
+    def _set_columns(self, columns):
+        self._columns = list(columns)
+
+    columns = property(_get_columns, _set_columns)
 
     def delete_row(self, row_num):
         self.deleted_rows.append(self.table[row_num])
@@ -62,7 +83,17 @@ class Row(object):
     def __init__(self, cells, row_num, table):
         self.table = table
         self.row_num = row_num
-        self.cells = [Datum(table, self, cell) for cell in cells]
+        self.cells = list(cells)
+
+    def __len__(self):
+        return len(self.cells)
+
+    def __getitem__(self, column_name):
+        index = self.table.columns.index(column_name)
+        return Datum(cells[index], self.row_num, column_name, self.table)
+
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, ', '.join([str(cell) for cell in self.cells]))
 
 
 class Datum(object):
@@ -74,3 +105,6 @@ class Datum(object):
         self.row_num = row_num
         self.column_name = column_name
         self.table = table
+
+    def __repr__(self):
+        return "<%s: %s>" % (self.column_name, self.value)
