@@ -16,32 +16,52 @@ class TableFu(object):
     
     TableFu reads in an open CSV file, parsing it 
     into a table property, Row and Datum objects.
+    
+    Usage:
+    
+    # test.csv
+    
+    Author,Best Book,Number of Pages,Style
+    Samuel Beckett,Malone Muert,120,Modernism
+    James Joyce,Ulysses,644,Modernism
+    Nicholson Baker,Mezannine,150,Minimalism
+    Vladimir Sorokin,The Queue,263,Satire
+    
+    >>> spreadsheet = TableFu(open('test.csv'))
+    >>> len(spreadsheet.rows)
+    4
+    >>> spreadsheet.columns
+    ['Author', 'Best Book', 'Number of Pages', 'Style']
+    >>> spreadsheet.columns = ['Style', 'Author']
+    
+    
     """
     def __init__(self, csv_file, **options):
         reader = csv.reader(csv_file)
         self.table = [row for row in reader]
-        self._rows = []
+        self.column_headers = options.get('columns', None) or self.table[0]
         self.deleted_rows = []
-        for row in self.table:
-            self.add_row(row)
+        self.options = options
 
-    def add_row(self, row):
-        self._rows.append(Row(self, row))
+    def add_rows(self, *rows):
+        for row in rows:
+            self.table.append(row)
 
     def rows(self):
-        return self._rows
+        return [Row(row, i, self) for i, row in enumerate(self.table[:1])]
 
     def delete_row(self, row_num):
-        self.deleted_rows.append(self.rows[row_num])
-        del self._rows[row_num]
+        self.deleted_rows.append(self.table[row_num])
+        del self.table[row_num]
 
 
 class Row(object):
     """
     A row in a table
     """
-    def __init__(self, table, cells):
+    def __init__(self, cells, row_num, table):
         self.table = table
+        self.row_num = row_num
         self.cells = [Datum(table, self, cell) for cell in cells]
 
 
@@ -49,7 +69,8 @@ class Datum(object):
     """
     A piece of data, with a table, row and column
     """
-    def __init__(self, table, row, value):
-        self.table = table
-        self.row = row
+    def __init__(self, value, row_num, column_name, table):
         self.value = value
+        self.row_num = row_num
+        self.column_name = column_name
+        self.table = table
