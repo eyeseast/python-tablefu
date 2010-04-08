@@ -59,7 +59,7 @@ class TableFu(object):
 
     @property
     def rows(self):
-        return [Row(row, i, self) for i, row in enumerate(self.table[1:])]
+        return [Row(row, i, self) for i, row in enumerate(self.table)]
 
     def _get_columns(self):
         if self._columns:
@@ -79,18 +79,27 @@ class TableFu(object):
 class Row(object):
     """
     A row in a table
+
+    Rows act like dictionaries, but look more like lists.
+    Calling row['column'] returns a column lookup based on
+    the default set of columns.
     """
     def __init__(self, cells, row_num, table):
         self.table = table
         self.row_num = row_num
         self.cells = list(cells)
 
+    def __eq__(self, other):
+        if not type(other) == type(self):
+            return False
+        return self.cells == other.cells
+
     def __len__(self):
         return len(self.cells)
 
     def __getitem__(self, column_name):
         index = self.table.columns.index(column_name)
-        return Datum(cells[index], self.row_num, column_name, self.table)
+        return Datum(self.cells[index], self.row_num, column_name, self.table)
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, ', '.join([str(cell) for cell in self.cells]))
