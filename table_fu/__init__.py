@@ -74,6 +74,24 @@ class TableFu(object):
     def delete_row(self, row_num):
         self.deleted_rows.append(self.table[row_num])
         del self.table[row_num]
+    
+    def sort(self, column_name):
+        if column_name not in self.default_columns:
+            raise ValueError("%s isn't a column in this table" % column_name)
+        index = self.default_columns.index(column_name)
+        self.table.sort(key = lambda row: row[index])
+
+    def values(self, column_name):
+        if column_name not in self.default_columns:
+            raise ValueError("%s isn't a column in this table" % column_name)
+        index = self.default_columns.index(column_name)
+        return [row[index] for row in self.table]
+    
+    def total(self, column_name):
+        if column_name not in self.default_columns:
+            raise ValueError("%s isn't a column in this table" % column_name)
+        
+        return sum(self.values(column_name))
 
 
 class Row(object):
@@ -98,6 +116,8 @@ class Row(object):
         return len(self.cells)
 
     def __getitem__(self, column_name):
+        if not column_name in self.table.default_columns:
+            raise KeyError("%s isn't a column in this table" % column_name)
         index = self.table.columns.index(column_name)
         return Datum(self.cells[index], self.row_num, column_name, self.table)
 

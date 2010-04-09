@@ -73,6 +73,48 @@ class DatumTest(TableTest):
                     str(row[column])
                 )
 
+class ErrorTest(TableTest):
+    
+    def testBadKey(self):
+        t = TableFu(self.csv_file)
+        for row in t.rows:
+            self.assertRaises(
+                KeyError,
+                row.__getitem__,
+                'not-a-key'
+            )
+    
+    def testBadTotal(self):
+        t = TableFu(self.csv_file)
+        self.assertRaises(ValueError, t.total, 'Author')
+
+
+class SortTest(TableTest):
+    
+    def testSort(self):
+        t = TableFu(self.csv_file)
+        self.table.pop(0)
+        self.table.sort(key=lambda row: row[0])
+        t.sort('Author')
+        self.assertEqual(
+            t[0].cells,
+            self.table[1]
+        )
+
+class ValuesTest(TableTest):
+
+    def testValues(self):
+        t = TableFu(self.csv_file)
+        self.table.pop(0)
+        authors = [row[0] for row in self.table]
+        self.assertEqual(authors, t.values('Author'))
+    
+    def testTotals(self):
+        t = TableFu(self.csv_file)
+        self.table.pop(0)
+        pages = sum([int(row[2]) for row in self.table])
+        self.assertEqual(pages, t.total('Number of Pages'))
+
 
 if __name__ == '__main__':
     unittest.main()
