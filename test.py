@@ -52,7 +52,7 @@ class RowTest(TableTest):
         for i, row in enumerate(self.table):
             self.assertEqual(
                 t[i].cells,
-                str(self.table[i])
+                self.table[i]
             )
 
 class DatumTest(TableTest):
@@ -70,7 +70,7 @@ class DatumTest(TableTest):
             for index, column in enumerate(columns):
                 self.assertEqual(
                     self.table[i][index],
-                    row[column]
+                    str(row[column])
                 )
 
 

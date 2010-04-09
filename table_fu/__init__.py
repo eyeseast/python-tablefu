@@ -117,3 +117,6 @@ class Datum(object):
 
     def __repr__(self):
         return "<%s: %s>" % (self.column_name, self.value)
+        
+    def __str__(self):
+        return self.value
