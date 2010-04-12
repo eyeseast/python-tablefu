@@ -91,7 +91,12 @@ class TableFu(object):
         if column_name not in self.default_columns:
             raise ValueError("%s isn't a column in this table" % column_name)
         
-        return sum(self.values(column_name))
+        try:
+            values = [float(v) for v in self.values(column_name)]
+        except ValueError:
+            raise ValueError('Column %s contains non-numeric values' % column_name)
+        
+        return sum(values)
 
 
 class Row(object):

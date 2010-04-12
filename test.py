@@ -98,7 +98,7 @@ class SortTest(TableTest):
         t.sort('Author')
         self.assertEqual(
             t[0].cells,
-            self.table[1]
+            self.table[0]
         )
 
 class ValuesTest(TableTest):
@@ -112,7 +112,7 @@ class ValuesTest(TableTest):
     def testTotals(self):
         t = TableFu(self.csv_file)
         self.table.pop(0)
-        pages = sum([int(row[2]) for row in self.table])
+        pages = sum([float(row[2]) for row in self.table])
         self.assertEqual(pages, t.total('Number of Pages'))
 
 
