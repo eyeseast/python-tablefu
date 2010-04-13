@@ -36,9 +36,19 @@ class TableFu(object):
     
     
     """
-    def __init__(self, csv_file, **options):
-        reader = csv.reader(csv_file)
-        self.table = [row for row in reader]
+    def __init__(self, table, **options):
+        """
+        Takes a table argument and optional keyword arguments.
+
+        The 'table' argument should be a two-dimensional array,
+        either a list or tuple, or an open file that can be
+        parsed by Python's csv module (using csv.reader)
+        """
+        if isinstance(table, file):
+            reader = csv.reader(table)
+            self.table = [row for row in reader]
+        else:
+            self.table = table
         self.default_columns = self.table.pop(0)
         self._columns = []
         self.deleted_rows = []

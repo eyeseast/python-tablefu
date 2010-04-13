@@ -15,12 +15,24 @@ class TableTest(unittest.TestCase):
     def tearDown(self):
         self.csv_file.close()
 
+
 class BigTableTest(TableTest):
 
     def testTable(self):
         t = TableFu(self.csv_file)
         self.table.pop(0)
         self.assertEqual(t.table, self.table)
+
+    def testTableFromList(self):
+        t = TableFu(self.table)
+        self.table.pop(0)
+        self.assertEqual(t.table, self.table)
+
+    def testTableTwoWays(self):
+        t1 = TableFu(self.csv_file)
+        t2 = TableFu(self.table)
+        self.assertEqual(t1.table, t2.table)
+
 
 class ColumnTest(TableTest):
 
