@@ -128,5 +128,22 @@ class ValuesTest(TableTest):
         self.assertEqual(pages, t.total('Number of Pages'))
 
 
+class FacetTest(TableTest):
+
+    def testFacet(self):
+        t = TableFu(self.csv_file)
+        tables = t.facet_by('Style')
+
+
+class OptionsTest(TableTest):
+    
+    def testSortOption(self):
+        t = TableFu(self.csv_file, sorted_by={"Author": {'reverse': True}})
+        self.table.pop(0)
+        self.table.sort(key=lambda row: row[0], reverse=True)
+        self.assertEqual(t[0].cells, self.table[0])
+
+
+
 if __name__ == '__main__':
     unittest.main()
