@@ -50,8 +50,10 @@ class TableFu(object):
         else:
             self.table = table
         self.default_columns = self.table.pop(0)
-        self._columns = []
+        self._columns = options.get('columns', [])
         self.deleted_rows = []
+        self.faceted_by = None
+        self.totals = {}
         self.options = options
 
     def __getitem__(self, row_num):
@@ -77,7 +79,7 @@ class TableFu(object):
         return self.default_columns
 
     def _set_columns(self, columns):
-        self._columns = list(columns)
+        self._columns = self.options['columns'] = list(columns)
 
     columns = property(_get_columns, _set_columns)
 
@@ -107,6 +109,30 @@ class TableFu(object):
             raise ValueError('Column %s contains non-numeric values' % column_name)
         
         return sum(values)
+
+    def facet_by(self, column):
+        """
+        Faceting creates new TableFu instances with rows matching
+        each possible value.
+        """
+        faceted_spreadsheets = {}
+        for row in self.rows:
+            if row[column]:
+                faceted_spreadsheets[row[column].value] = []
+                faceted_spreadsheets[row[column].value].append(row.cells)
+
+        # create a new TableFu instance for each facet
+        tables = []
+        for k, v in faceted_spreadsheets.items():
+            v.insert(0, self.default_columns)
+            table = TableFu(v)
+            table.faceted_on = k
+            table.options = self.options
+            tables.append(table)
+
+        tables.sort(key=lambda t: t.faceted_on)
+        return tables
+
 
 
 class Row(object):

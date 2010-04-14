@@ -133,6 +133,11 @@ class FacetTest(TableTest):
     def testFacet(self):
         t = TableFu(self.csv_file)
         tables = t.facet_by('Style')
+        style_row = self.table[4]
+        self.assertEqual(
+            style_row,
+            tables[2][0].cells
+        )
 
 
 class OptionsTest(TableTest):
