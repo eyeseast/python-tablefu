@@ -52,7 +52,7 @@ class TableFu(object):
         self.default_columns = self.table.pop(0)
         self._columns = options.get('columns', [])
         self.deleted_rows = []
-        self.faceted_by = None
+        self.faceted_on = None
         self.totals = {}
         self.options = options
 
@@ -118,8 +118,12 @@ class TableFu(object):
         faceted_spreadsheets = {}
         for row in self.rows:
             if row[column]:
-                faceted_spreadsheets[row[column].value] = []
-                faceted_spreadsheets[row[column].value].append(row.cells)
+                col = row[column].value
+                if faceted_spreadsheets.has_key(col):
+                    faceted_spreadsheets[col].append(row.cells)
+                else:
+                    faceted_spreadsheets[col] = []
+                    faceted_spreadsheets[col].append(row.cells)
 
         # create a new TableFu instance for each facet
         tables = []
