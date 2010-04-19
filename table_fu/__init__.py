@@ -54,6 +54,7 @@ class TableFu(object):
         self.deleted_rows = []
         self.faceted_on = None
         self.totals = {}
+        self.formatting = options.get('formatting', {})
         self.options = options
 
     def __getitem__(self, row_num):
