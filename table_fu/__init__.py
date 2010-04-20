@@ -56,6 +56,10 @@ class TableFu(object):
         self.totals = {}
         self.formatting = options.get('formatting', {})
         self.options = options
+        if options.has_key('sorted_by'):
+            col = options['sorted_by'].keys()[0]
+            self.sort(column_name=col, 
+            reverse=options['sorted_by'][col].get('reverse', False))
 
     def __getitem__(self, row_num):
         """
@@ -88,11 +92,18 @@ class TableFu(object):
         self.deleted_rows.append(self.table[row_num])
         del self.table[row_num]
     
-    def sort(self, column_name):
+    def sort(self, column_name=None, reverse=False):
+        """
+        Sort rows in this table, preserving a record of how that
+        sorting is done in TableFu.options['sorted_by']
+        """
+        if not column_name and self.options.has_key('sorted_by'):
+            column_name = self.options['sorted_by'].keys()[0]
         if column_name not in self.default_columns:
             raise ValueError("%s isn't a column in this table" % column_name)
         index = self.default_columns.index(column_name)
-        self.table.sort(key = lambda row: row[index])
+        self.table.sort(key = lambda row: row[index], reverse=reverse)
+        self.options['sorted_by'] = {column_name: {'reverse': reverse}}
 
     def values(self, column_name):
         if column_name not in self.default_columns:

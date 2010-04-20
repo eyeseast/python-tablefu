@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 import unittest
 from table_fu import TableFu
+from table_fu.formatters import Formatter
+
 
 class TableTest(unittest.TestCase):
         
@@ -147,6 +149,25 @@ class OptionsTest(TableTest):
         self.table.pop(0)
         self.table.sort(key=lambda row: row[0], reverse=True)
         self.assertEqual(t[0].cells, self.table[0])
+
+
+class FormatTest(unittest.TestCase):
+
+    def setUp(self):
+        self.format = Formatter()
+
+
+class RegisterTest(FormatTest):
+
+    def testRegister(self):
+
+        def test(value, *args):
+            args = list(args)
+            args.insert(0, value)
+            return args
+
+        self.format.register(test)
+        self.assertEqual(test, self.format._filters['test'])
 
 
 
