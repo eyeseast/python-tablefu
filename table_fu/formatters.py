@@ -41,13 +41,21 @@ class Formatter(object):
         
         return func(value, *args)
     
-    def register(self, func, name=None):
-        if not name:
+    def register(self, name=None, func=None):
+        if not func and not name:
+            return
+
+        if callable(name) and not func:
+            func = name
+            name = func.__name__
+        elif func and not name:
             name = func.__name__
         
         self._filters[name] = func
     
-    def unregister(self, func, name=None):
+    def unregister(self, func=None, name=None):
+        if not func and not name:
+            return
         if not name:
             name = func.__name__
         
