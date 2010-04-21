@@ -175,11 +175,14 @@ class Row(object):
     def __getitem__(self, column_name):
         if not column_name in self.table.default_columns:
             raise KeyError("%s isn't a column in this table" % column_name)
-        index = self.table.columns.index(column_name)
+        index = self.table.default_columns.index(column_name)
         return Datum(self.cells[index], self.row_num, column_name, self.table)
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, ', '.join([str(cell) for cell in self.cells]))
+        return "<%s: %s>" % (self.__class__.__name__, self.__str__())
+
+    def __str__(self):
+        return ', '.join([str(self[column]) for column in self.table.columns])
 
 
 class Datum(object):
@@ -196,4 +199,9 @@ class Datum(object):
         return "<%s: %s>" % (self.column_name, self.value)
         
     def __str__(self):
+        """
+        Calling str(datum) should check first for a formatted
+        version of value, then fall back to the default value
+        if there's no set formatting.
+        """
         return self.value

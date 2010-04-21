@@ -69,6 +69,17 @@ class RowTest(TableTest):
                 self.table[i]
             )
 
+class RowColumnTest(TableTest):
+     
+    def testLimitColumns(self):
+        t = TableFu(self.csv_file)
+        t.columns = ['Author', 'Style']
+        self.assertEqual(
+            str(t[0]),
+            'Samuel Beckett, Modernism'
+            )
+
+
 class DatumTest(TableTest):
     
     def testGetDatum(self):
@@ -149,6 +160,12 @@ class OptionsTest(TableTest):
         self.table.pop(0)
         self.table.sort(key=lambda row: row[0], reverse=True)
         self.assertEqual(t[0].cells, self.table[0])
+
+
+class FormatTest(TableTest):
+    
+    def testCellFormat(self):
+        pass
 
 
 class FormatTest(unittest.TestCase):
