@@ -4,7 +4,13 @@ Inspired by James Bennett's template_utils and Django's
 template filters.
 """
 
-DEFAULT_FORMATTERS = {}
+def link(title, url):
+    return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
+
+
+DEFAULT_FORMATTERS = {
+    'link': link
+}
 
 class Formatter(object):
     """
@@ -33,7 +39,7 @@ class Formatter(object):
     def __init__(self):
         self._filters = {}
         for name, func in DEFAULT_FORMATTERS.items():
-            self.register(func, name)
+            self.register(name, func)
     
     def __call__(self, value, func, *args):
         if not callable(func):
@@ -53,7 +59,7 @@ class Formatter(object):
         
         self._filters[name] = func
     
-    def unregister(self, func=None, name=None):
+    def unregister(self, name=None, func=None):
         if not func and not name:
             return
         if not name:
