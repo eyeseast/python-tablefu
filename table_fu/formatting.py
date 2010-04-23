@@ -3,13 +3,33 @@ Utilities to format values into more meaningful strings.
 Inspired by James Bennett's template_utils and Django's
 template filters.
 """
+import re
+
+def intcomma(value):
+    """
+    Borrowed from django.contrib.humanize
+    
+    Converts an integer to a string containing commas every three digits.
+    For example, 3000 becomes '3,000' and 45000 becomes '45,000'.
+    """
+    orig = str(value)
+    new = re.sub("^(-?\d+)(\d{3})", '\g<1>,\g<2>', orig)
+    if orig == new:
+        return new
+    else:
+        return intcomma(new)
+
+def dollars(value):
+    return u'$%s'% intcomma(value)
 
 def link(title, url):
     return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
 
 
 DEFAULT_FORMATTERS = {
-    'link': link
+    'link': link,
+    'intcomma': intcomma,
+    'dollars': dollars
 }
 
 class Formatter(object):
@@ -33,7 +53,7 @@ class Formatter(object):
     >>> formatter(1200, 'intcomma')
     '1,200'
     >>> formatter(1200, 'dollars')
-    '$1200.00'
+    '$1,200'
     """
     
     def __init__(self):

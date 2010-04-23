@@ -9,6 +9,7 @@ getting tabular on the web easier.
 import csv
 import urllib2
 
+from table_fu.formatting import format
 
 class TableFu(object):
     """
@@ -204,4 +205,13 @@ class Datum(object):
         version of value, then fall back to the default value
         if there's no set formatting.
         """
+        if self.table.formatting.has_key(self.column_name):
+            func = self.table.formatting[self.column_name].get('filter', None)
+            args = self.table.formatting[self.column_name].get('args', [])
+            
+            if func:
+                row = self.table[self.row_num]
+                args = [row[arg].value for arg in args]
+                return format(self.value, func, *args)
+                
         return self.value

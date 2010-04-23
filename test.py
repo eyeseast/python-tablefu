@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import unittest
 from table_fu import TableFu
-from table_fu.formatters import Formatter
+from table_fu.formatting import Formatter
 
 
 class TableTest(unittest.TestCase):
@@ -162,10 +162,23 @@ class OptionsTest(TableTest):
         self.assertEqual(t[0].cells, self.table[0])
 
 
-class FormatTest(TableTest):
+class DatumFormatTest(TableTest):
+    
+    def setUp(self):
+        self.csv_file = open('tests/sites.csv')
     
     def testCellFormat(self):
-        pass
+        t = TableFu(self.csv_file)
+        t.formatting = {'Name': {
+            'filter': 'link',
+            'args': ['URL']
+            }
+        }
+        
+        self.assertEqual(
+            str(t[0]['Name']),
+            '<a href="http://www.chrisamico.com" title="ChrisAmico.com">ChrisAmico.com</a>'
+        )
 
 
 class FormatTest(unittest.TestCase):
@@ -185,6 +198,13 @@ class RegisterTest(FormatTest):
 
         self.format.register(test)
         self.assertEqual(test, self.format._filters['test'])
+    
+    def testIntComma(self):
+        
+        self.assertEqual(
+            self.format(1200, 'intcomma'),
+            '1,200'
+        )
 
 
 
