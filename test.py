@@ -180,6 +180,27 @@ class DatumFormatTest(TableTest):
             '<a href="http://www.chrisamico.com" title="ChrisAmico.com">ChrisAmico.com</a>'
         )
 
+class HTMLTest(TableTest):
+    
+    def testDatumTD(self):
+        
+        t = TableFu(self.csv_file)
+        beckett = t[0]['Author']
+        self.assertEqual(
+            beckett.as_td(),
+            '<td class="datum">Samuel Beckett</td>'
+        )
+    
+    def testRowTR(self):
+        
+        t = TableFu(self.csv_file)
+        row = t[0]
+        self.assertEqual(
+            row.as_tr(),
+            '<tr id="row0" class="row even"><td class="datum">Samuel Beckett</td><td class="datum">Malone Muert</td><td class="datum">120</td><td class="datum">Modernism</td></tr>'
+        )
+        
+    
 
 class FormatTest(unittest.TestCase):
 
