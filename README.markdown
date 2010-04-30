@@ -85,9 +85,26 @@ Cells can be formatted according to rules of the table (which carry over if the 
     >>> print table[0]['Name']
     <a href="http://www.chrisamico.com" title="ChrisAmico.com">ChrisAmico.com</a>
     
+    
+HTML Output
+-----------
 
-To do:
+TableFu can output an HTML table, using formatting you specify:
 
- - output (this should, eventually, output HTML)
+    >>> table = TableFu(open('tests/sites.csv'))
+    >>> table.columns
+    ['Name', 'URL', 'About']
+    >>> table.formatting = {'name': {'link': ('URL',)}}
+    >>> table.columns = 'Name', 'About'
+    >>> print table.html()
+    <table>
+    <thead>
+    <tr><th>Name</th><th>About</th></tr>
+    </thead>
+    <tbody>
+    <tr id="row0" class="row even"><td class="datum">ChrisAmico.com</td><td class="datum">My personal site and blog</td></tr>
+    <tr id="row1" class="row odd"><td class="datum">ProPublica</td><td class="datum">Builders of the Ruby version of this library</td></tr>
+    <tr id="row2" class="row even"><td class="datum">PBS NewsHour</td><td class="datum">Where I spend my days</td></tr>
+    </tbody>
+    </table>
 
-More documentation coming.
