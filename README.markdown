@@ -94,7 +94,7 @@ TableFu can output an HTML table, using formatting you specify:
     >>> table = TableFu(open('tests/sites.csv'))
     >>> table.columns
     ['Name', 'URL', 'About']
-    >>> table.formatting = {'name': {'link': ('URL',)}}
+    >>> table.formatting = {'Name': {'filter: 'link', 'args': ['URL']}}
     >>> table.columns = 'Name', 'About'
     >>> print table.html()
     <table>
@@ -102,9 +102,9 @@ TableFu can output an HTML table, using formatting you specify:
     <tr><th>Name</th><th>About</th></tr>
     </thead>
     <tbody>
-    <tr id="row0" class="row even"><td class="datum">ChrisAmico.com</td><td class="datum">My personal site and blog</td></tr>
-    <tr id="row1" class="row odd"><td class="datum">ProPublica</td><td class="datum">Builders of the Ruby version of this library</td></tr>
-    <tr id="row2" class="row even"><td class="datum">PBS NewsHour</td><td class="datum">Where I spend my days</td></tr>
+    <tr id="row0" class="row even"><td class="datum"><a href="http://www.chrisamico.com" title="ChrisAmico.com">ChrisAmico.com</a></td><td class="datum">My personal site and blog</td></tr>
+    <tr id="row1" class="row odd"><td class="datum"><a href="http://www.propublica.org" title="ProPublica">ProPublica</a></td><td class="datum">Builders of the Ruby version of this library</td></tr>
+    <tr id="row2" class="row even"><td class="datum"><a href="http://www.pbs.org/newshour" title="PBS NewsHour">PBS NewsHour</a></td><td class="datum">Where I spend my days</td></tr>
     </tbody>
     </table>
 
