@@ -6,6 +6,10 @@ TableFu parses, sorts and formats table-like streams, like CSVs,
 and outputs tables in HTML. It's meant as a utility to make 
 getting tabular on the web easier.
 """
+__version__ = "0.2.0"
+__author__ = "Chris Amico (eyeseast@gmail.com)"
+
+
 import csv
 import urllib2
 
