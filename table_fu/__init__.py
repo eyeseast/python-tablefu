@@ -122,6 +122,13 @@ class TableFu(object):
             raise ValueError('Column %s contains non-numeric values' % column_name)
         
         return sum(values)
+    
+    def html(self):
+        table = '<table>\n%s\n%s\n</table>'
+        thead = '<thead>\n<tr>%s</tr>\n</thead>' % ''.join(['<th>%s</th>' % col for col in self.columns])
+        tbody = '<tbody>\n%s\n</tbody>' % '\n'.join([row.as_tr() for row in self.rows])
+        return table % (thead, tbody)
+        
 
     def facet_by(self, column):
         """
@@ -144,6 +151,7 @@ class TableFu(object):
             v.insert(0, self.default_columns)
             table = TableFu(v)
             table.faceted_on = k
+            table.formatting = self.formatting
             table.options = self.options
             tables.append(table)
 
@@ -184,6 +192,14 @@ class Row(object):
 
     def __str__(self):
         return ', '.join([str(self[column]) for column in self.table.columns])
+    
+    def as_tr(self):
+        cells = ''.join([d.as_td() for d in self.data])
+        return '<tr id="row%s" class="row %s">%s</tr>' % (self.row_num, odd_even(self.row_num), cells)
+        
+    @property
+    def data(self):
+        return [self[col] for col in self.table.columns]
 
 
 class Datum(object):
@@ -215,3 +231,12 @@ class Datum(object):
                 return format(self.value, func, *args)
                 
         return self.value
+    
+    def as_td(self):
+        return '<td class="datum">%s</td>' % self.__str__()
+
+def odd_even(num):
+    if num % 2 == 0:
+        return "even"
+    else:
+        return "odd"
