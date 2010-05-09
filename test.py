@@ -1,5 +1,7 @@
 #! /usr/bin/env python
+import csv
 import unittest
+import urllib2
 from table_fu import TableFu
 from table_fu.formatting import Formatter
 
@@ -227,6 +229,16 @@ class RegisterTest(FormatTest):
             '1,200'
         )
 
+class RemoteTest(unittest.TestCase):
+    
+    def testUseURL(self):
+        url = "http://spreadsheets.google.com/pub?key=thJa_BvqQuNdaFfFJMMII0Q&output=csv"
+        response1 = urllib2.urlopen(url)
+        response2 = urllib2.urlopen(url)
+        reader = csv.reader(response1)
+        columns = reader.next()
+        t = TableFu(response2)
+        self.assertEqual(columns, t.columns)
 
 
 if __name__ == '__main__':

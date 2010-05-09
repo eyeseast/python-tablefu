@@ -49,7 +49,7 @@ class TableFu(object):
         either a list or tuple, or an open file that can be
         parsed by Python's csv module (using csv.reader)
         """
-        if isinstance(table, file):
+        if hasattr(table, 'next'): # for file-like objects
             reader = csv.reader(table)
             self.table = [row for row in reader]
         else:
