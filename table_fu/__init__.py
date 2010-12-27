@@ -186,6 +186,11 @@ class Row(object):
     def __len__(self):
         return len(self.cells)
     
+    def update(self, d):
+        "Update multiple cell values in place"
+        for k, v in d.items():
+            self[k] = v
+    
     def get(self, column_name, default=None):
         """
         Return the Datum for column_name, or default.
@@ -194,8 +199,18 @@ class Row(object):
             index = self.table.default_columns.index(column_name)
             return Datum(self.cells[index], self.row_num, column_name, self.table)
         return default
+    
+    def keys(self):
+        return self.table.columns
+    
+    def values(self):
+        return [d.value for d in self.data]
+    
+    def items(self):
+        return zip(self.keys(), self.values())
 
     def __getitem__(self, column_name):
+        "Get the value for a given cell, or raise KeyError if the column doesn't exist"
         datum = self.get(column_name)
         if datum is None:
             raise KeyError("%s isn't a column in this table" % column_name)

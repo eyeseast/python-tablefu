@@ -105,7 +105,41 @@ class DatumTest(TableTest):
                     self.table[i][index],
                     str(row[column])
                 )
-
+    
+    def testUpdateValues(self):
+        t = TableFu(self.csv_file)
+        modernism = t[0]
+        kerouac = {
+            'Author': 'Jack Kerouac',
+            'Best Book': 'On the Road',
+            'Number of Pages': '320',
+            'Style': 'Beat'
+        }
+        modernism.update(kerouac)
+        self.assertEqual(
+            set(kerouac.values()),
+            set(modernism.cells)
+        )
+    
+    def testKeys(self):
+        t = TableFu(self.csv_file)
+        modernism = t[0]
+        self.assertEqual(modernism.keys(), t.columns)
+    
+    def testValues(self):
+        t = TableFu(self.csv_file)
+        modernism = t[0]
+        values = [d.value for d in modernism.data]
+        self.assertEqual(modernism.values(), values)
+    
+    def testItems(self):
+        t = TableFu(self.csv_file)
+        modernism = t[0]
+        self.assertEqual(
+            modernism.items(),
+            zip(modernism.keys(), modernism.values())
+        )
+        
 class ErrorTest(TableTest):
     
     def testBadKey(self):
