@@ -139,6 +139,14 @@ class DatumTest(TableTest):
             modernism.items(),
             zip(modernism.keys(), modernism.values())
         )
+    
+    def testListRow(self):
+        t = TableFu(self.csv_file)
+        modernism = t[0]
+        self.assertEqual(
+            list(modernism),
+            modernism.values()
+        )
         
 class ErrorTest(TableTest):
     

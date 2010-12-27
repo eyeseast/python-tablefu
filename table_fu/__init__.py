@@ -72,6 +72,9 @@ class TableFu(object):
         Return one row in the table
         """
         return Row(self.table[row_num], row_num, self)
+    
+    def __iter__(self):
+        return iter(self.rows)
 
     def __len__(self):
         return len(self.table[1:])
@@ -225,6 +228,13 @@ class Row(object):
             raise KeyError("%s isn't a column in this table" % column_name)
         index = self.table.default_columns.index(column_name)
         self.cells[index] = value
+    
+    def __iter__(self):
+        """
+        Iterate over values, *not keys*. Keys are accessible
+        as Row.table.columns or Row.keys()
+        """
+        return iter(self.values())
     
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.__str__())
