@@ -90,6 +90,12 @@ class DatumTest(TableTest):
             for c in self.table[0]:
                 self.assertEqual(c, row[c].column_name)
 
+    def testSetDatum(self):
+        t = TableFu(self.csv_file)
+        modernism = t[0]
+        modernism['Author'] = "Someone new"
+        self.assertEqual(str(modernism['Author']), "Someone new")
+
     def testDatumValues(self):
         t = TableFu(self.csv_file)
         columns = self.table.pop(0)

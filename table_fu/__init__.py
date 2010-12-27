@@ -38,7 +38,8 @@ class TableFu(object):
     >>> spreadsheet.columns
     ['Author', 'Best Book', 'Number of Pages', 'Style']
     >>> spreadsheet.columns = ['Style', 'Author']
-    
+    >>> spreadsheet.columms
+    ['Style', 'Author']
     
     """
     def __init__(self, table, **options):
@@ -184,13 +185,32 @@ class Row(object):
 
     def __len__(self):
         return len(self.cells)
+    
+    def get(self, column_name, default=None):
+        """
+        Return the Datum for column_name, or default.
+        """
+        if column_name in self.table.default_columns:
+            index = self.table.default_columns.index(column_name)
+            return Datum(self.cells[index], self.row_num, column_name, self.table)
+        return default
 
     def __getitem__(self, column_name):
+        datum = self.get(column_name)
+        if datum is None:
+            raise KeyError("%s isn't a column in this table" % column_name)
+        else:
+            return datum
+    
+    def __setitem__(self, column_name, value):
+        """
+        Set the value for a given cell
+        """
         if not column_name in self.table.default_columns:
             raise KeyError("%s isn't a column in this table" % column_name)
         index = self.table.default_columns.index(column_name)
-        return Datum(self.cells[index], self.row_num, column_name, self.table)
-
+        self.cells[index] = value
+    
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.__str__())
 
