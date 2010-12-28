@@ -136,6 +136,11 @@ class DatumTest(TableTest):
             set(modernism.cells)
         )
     
+    def test_datum_equality(self):
+        "Data are tested on their values"
+        t = TableFu(self.csv_file)
+        self.assertEqual(t[0]['Author'], 'Samuel Beckett')
+    
     def test_keys(self):
         "Get keys for a row, which should match the table's columns"
         t = TableFu(self.csv_file)
@@ -234,6 +239,31 @@ class FilterTest(TableTest):
         "Count is like len()"
         t = TableFu(self.csv_file)
         self.assertEqual(len(t), t.count())
+    
+    def test_filter(self):
+        "Filtering returns a new TableFu instance"
+        t = TableFu(self.csv_file)
+        f = t.filter(Author='Samuel Beckett')
+        self.assertEqual(type(t), type(f))
+        self.assertEqual(t.columns, f.columns)
+    
+    def test_simple_filter(self):
+        "Filter by keyword args"
+        t = TableFu(self.csv_file)
+        f = t.filter(Author='Samuel Beckett')
+        self.assertEqual(f[0].cells, self.table[1])
+    
+    def test_multi_filter(self):
+        "Filter by multiple keywords"
+        t = TableFu(self.csv_file)
+        f = t.filter(Style='Modernism', Author='Samuel Beckett')
+        self.assertEqual(f[0].cells, self.table[1])
+    
+    def test_big_filter(self):
+        arra = open('tests/arra.csv')
+        t = TableFu(arra)
+        f = t.filter(State='ALABAMA', County='COLBERT')
+        self.assertEqual(f.count(), 5)
 
 class OptionsTest(TableTest):
     

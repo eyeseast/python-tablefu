@@ -138,7 +138,24 @@ class TableFu(object):
         thead = '<thead>\n<tr>%s</tr>\n</thead>' % ''.join(['<th>%s</th>' % col for col in self.columns])
         tbody = '<tbody>\n%s\n</tbody>' % '\n'.join([row.as_tr() for row in self.rows])
         return table % (thead, tbody)
+    
+    def filter(self, func=None, **query):
+        """
+        Tables can be filtered in one of two ways:
+         - Simple keyword arguments return rows where values match *exactly*
+         - Pass in a function and return rows where that function evaluates to True
         
+        In either case, a new TableFu instance is returned
+        """
+        if callable(func):
+            result = filter(func, self)
+            result.insert(0, self.default_columns)
+            return TableFu(result, **self.options)
+        else:
+            result = self
+            for column, value in query.items():
+                result = result.filter(lambda r: r[column] == value)
+            return result
 
     def facet_by(self, column):
         """
@@ -282,6 +299,12 @@ class Datum(object):
                 return format(self.value, func, *args)
                 
         return self.value
+    
+    def __eq__(self, other):
+        if type(other) == type(self):
+            return self.value == other.value
+        else:
+            return self.value == other
     
     def as_td(self):
         return '<td class="datum">%s</td>' % self.__str__()
