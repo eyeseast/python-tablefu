@@ -23,16 +23,19 @@ class TableTest(unittest.TestCase):
 class BigTableTest(TableTest):
 
     def testTable(self):
+        "Create a table from an open CSV file"
         t = TableFu(self.csv_file)
         self.table.pop(0)
-        self.assertEqual(t.table, self.table)
+        self.assertEqual(t.table, self.table, 4)
 
     def testTableFromList(self):
+        "Create a table from a two-dimensional list"
         t = TableFu(self.table)
         self.table.pop(0)
         self.assertEqual(t.table, self.table)
 
     def testTableTwoWays(self):
+        "Two ways to create the same table"
         t1 = TableFu(self.csv_file)
         t2 = TableFu(self.table)
         self.assertEqual(t1.table, t2.table)
@@ -41,10 +44,12 @@ class BigTableTest(TableTest):
 class ColumnTest(TableTest):
 
     def testgetColumns(self):
+        "Get a table's (default) columns"
         t = TableFu(self.csv_file)
         self.assertEqual(t.columns, self.table[0])
 
     def testsetColumns(self):
+        "Set new columns for a table"
         t = TableFu(self.csv_file)
         columns = ['Style', 'Author']
         t.columns = columns
@@ -54,15 +59,18 @@ class ColumnTest(TableTest):
 class RowTest(TableTest):
     
     def testCountRows(self):
+        "Count rows, not including headings"
         t = TableFu(self.csv_file)
         self.table.pop(0)
-        self.assertEqual(len(t.rows), len(self.table))
+        self.assertEqual(len(t.rows), len(self.table), 4)
 
     def testGetRow(self):
+        "Get one row by slicing the table"
         t = TableFu(self.csv_file)
         self.assertEqual(t[1], t.rows[1])
 
     def testCheckRow(self):
+        "Check that row numbers are assigned correctly"
         t = TableFu(self.csv_file)
         self.table.pop(0)
         for i, row in enumerate(self.table):
@@ -74,6 +82,7 @@ class RowTest(TableTest):
 class RowColumnTest(TableTest):
      
     def testLimitColumns(self):
+        "Column definitions are passed to rows"
         t = TableFu(self.csv_file)
         t.columns = ['Author', 'Style']
         self.assertEqual(
@@ -85,18 +94,21 @@ class RowColumnTest(TableTest):
 class DatumTest(TableTest):
     
     def testGetDatum(self):
+        "Get one cell at a time"
         t = TableFu(self.csv_file)
         for row in t.rows:
             for c in self.table[0]:
                 self.assertEqual(c, row[c].column_name)
 
     def testSetDatum(self):
+        "Set a new value for one cell"
         t = TableFu(self.csv_file)
         modernism = t[0]
         modernism['Author'] = "Someone new"
         self.assertEqual(str(modernism['Author']), "Someone new")
 
     def testDatumValues(self):
+        "Ensure every cell has the right value"
         t = TableFu(self.csv_file)
         columns = self.table.pop(0)
         for i, row in enumerate(t.rows):
@@ -107,6 +119,7 @@ class DatumTest(TableTest):
                 )
     
     def testUpdateValues(self):
+        "Update multiple cell values for a given row"
         t = TableFu(self.csv_file)
         modernism = t[0]
         kerouac = {
@@ -122,17 +135,20 @@ class DatumTest(TableTest):
         )
     
     def testKeys(self):
+        "Get keys for a row, which should match the table's columns"
         t = TableFu(self.csv_file)
         modernism = t[0]
         self.assertEqual(modernism.keys(), t.columns)
     
     def testValues(self):
+        "Get values for a row"
         t = TableFu(self.csv_file)
         modernism = t[0]
         values = [d.value for d in modernism.data]
         self.assertEqual(modernism.values(), values)
     
     def testItems(self):
+        "Get key-value pairs for a row"
         t = TableFu(self.csv_file)
         modernism = t[0]
         self.assertEqual(
@@ -141,6 +157,7 @@ class DatumTest(TableTest):
         )
     
     def testListRow(self):
+        "Convert a row back to a list"
         t = TableFu(self.csv_file)
         modernism = t[0]
         self.assertEqual(
@@ -151,6 +168,7 @@ class DatumTest(TableTest):
 class ErrorTest(TableTest):
     
     def testBadKey(self):
+        "Non-existent columns raise a KeyError"
         t = TableFu(self.csv_file)
         for row in t.rows:
             self.assertRaises(
@@ -160,6 +178,7 @@ class ErrorTest(TableTest):
             )
     
     def testBadTotal(self):
+        "Only number-like fields can be totaled"
         t = TableFu(self.csv_file)
         self.assertRaises(ValueError, t.total, 'Author')
 
@@ -167,6 +186,7 @@ class ErrorTest(TableTest):
 class SortTest(TableTest):
     
     def testSort(self):
+        "Sort a table in place"
         t = TableFu(self.csv_file)
         self.table.pop(0)
         self.table.sort(key=lambda row: row[0])
@@ -179,12 +199,14 @@ class SortTest(TableTest):
 class ValuesTest(TableTest):
 
     def testValues(self):
+        "Return one column's values for all rows"
         t = TableFu(self.csv_file)
         self.table.pop(0)
         authors = [row[0] for row in self.table]
         self.assertEqual(authors, t.values('Author'))
     
     def testTotals(self):
+        "Total values for a table across rows"
         t = TableFu(self.csv_file)
         self.table.pop(0)
         pages = sum([float(row[2]) for row in self.table])
@@ -194,6 +216,7 @@ class ValuesTest(TableTest):
 class FacetTest(TableTest):
 
     def testFacet(self):
+        "Facet tables based on shared column values"
         t = TableFu(self.csv_file)
         tables = t.facet_by('Style')
         style_row = self.table[4]
@@ -206,6 +229,7 @@ class FacetTest(TableTest):
 class OptionsTest(TableTest):
     
     def testSortOption(self):
+        "Pass in options as keyword arguments"
         t = TableFu(self.csv_file, sorted_by={"Author": {'reverse': True}})
         self.table.pop(0)
         self.table.sort(key=lambda row: row[0], reverse=True)
@@ -218,6 +242,7 @@ class DatumFormatTest(TableTest):
         self.csv_file = open('tests/sites.csv')
     
     def testCellFormat(self):
+        "Format a cell"
         t = TableFu(self.csv_file)
         t.formatting = {'Name': {
             'filter': 'link',
@@ -233,7 +258,7 @@ class DatumFormatTest(TableTest):
 class HTMLTest(TableTest):
     
     def testDatumTD(self):
-        
+        "Output a cell as a <td> element"
         t = TableFu(self.csv_file)
         beckett = t[0]['Author']
         self.assertEqual(
@@ -242,7 +267,7 @@ class HTMLTest(TableTest):
         )
     
     def testRowTR(self):
-        
+        "Output a row as a <tr> element"
         t = TableFu(self.csv_file)
         row = t[0]
         self.assertEqual(
@@ -261,6 +286,7 @@ class FormatTest(unittest.TestCase):
 class RegisterTest(FormatTest):
 
     def testRegister(self):
+        "Register a new format function"
 
         def test(value, *args):
             args = list(args)
@@ -271,7 +297,7 @@ class RegisterTest(FormatTest):
         self.assertEqual(test, self.format._filters['test'])
     
     def testIntComma(self):
-        
+        "Use intcomma for nicer number formatting"
         self.assertEqual(
             self.format(1200, 'intcomma'),
             '1,200'
@@ -280,6 +306,7 @@ class RegisterTest(FormatTest):
 class RemoteTest(unittest.TestCase):
     
     def testUseURL(self):
+        "Use a response from urllib2.urlopen as our base file"
         url = "http://spreadsheets.google.com/pub?key=thJa_BvqQuNdaFfFJMMII0Q&output=csv"
         response1 = urllib2.urlopen(url)
         response2 = urllib2.urlopen(url)
