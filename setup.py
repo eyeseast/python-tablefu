@@ -14,8 +14,9 @@ setup(
     long_description = long_description,
     packages = ['table_fu'],
     url = "http://github.com/eyeseast/python-tablefu",
+    license = "MIT",
     platforms = ['any'],
-    classifiers = ["Development Status :: 1 - Alpha",
+    classifiers = [
                    "Intended Audience :: Developers",
                    "Natural Language :: English",
                    "Operating System :: OS Independent",
