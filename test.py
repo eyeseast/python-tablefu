@@ -26,7 +26,7 @@ class BigTableTest(TableTest):
         "Create a table from an open CSV file"
         t = TableFu(self.csv_file)
         self.table.pop(0)
-        self.assertEqual(t.table, self.table, 4)
+        self.assertEqual(t.table, self.table)
 
     def test_table_from_list(self):
         "Create a table from a two-dimensional list"
@@ -62,7 +62,8 @@ class RowTest(TableTest):
         "Count rows, not including headings"
         t = TableFu(self.csv_file)
         self.table.pop(0)
-        self.assertEqual(len(t.rows), len(self.table), 4)
+        self.assertEqual(len(t.rows), len(self.table))
+        self.assertEqual(len(t), len(self.table))
 
     def test_get_row(self):
         "Get one row by slicing the table"
@@ -227,6 +228,12 @@ class FacetTest(TableTest):
             tables[2][0].cells
         )
 
+class FilterTest(TableTest):
+    
+    def test_count(self):
+        "Count is like len()"
+        t = TableFu(self.csv_file)
+        self.assertEqual(len(t), t.count())
 
 class OptionsTest(TableTest):
     

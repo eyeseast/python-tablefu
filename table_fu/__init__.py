@@ -77,12 +77,15 @@ class TableFu(object):
         return iter(self.rows)
 
     def __len__(self):
-        return len(self.table[1:])
+        return len(self.table)
 
     def add_rows(self, *rows):
         for row in rows:
             self.table.append(row)
-
+    
+    def count(self):
+        return len(self)
+    
     @property
     def rows(self):
         return [Row(row, i, self) for i, row in enumerate(self.table)]
@@ -98,8 +101,7 @@ class TableFu(object):
     columns = property(_get_columns, _set_columns)
 
     def delete_row(self, row_num):
-        self.deleted_rows.append(self.table[row_num])
-        del self.table[row_num]
+        self.deleted_rows.append(self.table.rows.pop(row_num))
     
     def sort(self, column_name=None, reverse=False):
         """
