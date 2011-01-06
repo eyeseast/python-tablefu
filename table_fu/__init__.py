@@ -9,9 +9,22 @@ getting tabular on the web easier.
 __version__ = "0.3.0"
 __author__ = "Chris Amico (eyeseast@gmail.com)"
 
-
 import csv
 import urllib2
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+try:
+    import json
+    has_json = True
+except ImportError:
+    try:
+        import simplejson as json
+        has_json = True
+    except ImportError:
+        has_json = False
 
 from table_fu.formatting import format
 
@@ -133,12 +146,6 @@ class TableFu(object):
         
         return sum(values)
     
-    def html(self):
-        table = '<table>\n%s\n%s\n</table>'
-        thead = '<thead>\n<tr>%s</tr>\n</thead>' % ''.join(['<th>%s</th>' % col for col in self.columns])
-        tbody = '<tbody>\n%s\n</tbody>' % '\n'.join([row.as_tr() for row in self.rows])
-        return table % (thead, tbody)
-    
     def filter(self, func=None, **query):
         """
         Tables can be filtered in one of two ways:
@@ -184,7 +191,34 @@ class TableFu(object):
 
         tables.sort(key=lambda t: t.faceted_on)
         return tables
-
+    
+    # export methods
+    def html(self):
+        table = '<table>\n%s\n%s\n</table>'
+        thead = '<thead>\n<tr>%s</tr>\n</thead>' % ''.join(['<th>%s</th>' % col for col in self.columns])
+        tbody = '<tbody>\n%s\n</tbody>' % '\n'.join([row.as_tr() for row in self.rows])
+        return table % (thead, tbody)
+    
+    def csv(self, **kwargs):
+        """
+        Export this table as a CSV
+        """
+        out = StringIO()
+        writer = csv.DictWriter(out, self.columns, **kwargs)
+        writer.writerow(dict(zip(self.columns, self.columns)))
+        writer.writerows(dict(row.items()) for row in self.rows)
+        
+        result = out.getvalue()
+        out.close()
+        return result
+    
+    def dict(self):
+        return [dict(row.items()) for row in self.rows]
+    
+    def json(self, **kwargs):
+        if not has_json:
+            raise ValueError("Couldn't find a JSON library")
+        return json.dumps(self.dict(), **kwargs)
 
 
 class Row(object):

@@ -314,6 +314,36 @@ class HTMLTest(TableTest):
             '<tr id="row0" class="row even"><td class="datum">Samuel Beckett</td><td class="datum">Malone Muert</td><td class="datum">120</td><td class="datum">Modernism</td></tr>'
         )
 
+class OutputTest(TableTest):
+    
+    def test_csv(self):
+        t = TableFu(self.csv_file)
+        self.csv_file.seek(0)
+        for test, control in zip(t.csv(), self.csv_file.readline()):
+            self.assertEqual(test.strip(), control.strip()) # controlling for newlines
+    
+    def test_json(self):
+        try:
+            import json
+        except ImportError:
+            try:
+                import simplejson as json
+            except ImportError:
+                return
+        
+        t = TableFu(self.csv_file)
+        self.csv_file.seek(0)
+        reader = csv.DictReader(self.csv_file)
+        jsoned = json.dumps([row for row in reader])
+        self.assertEqual(t.json(), jsoned)
+    
+    def test_python(self):
+        t = TableFu(self.csv_file)
+        self.csv_file.seek(0)
+        reader = csv.DictReader(self.csv_file)
+        jsoned = [row for row in reader]
+        self.assertEqual(t.dict(), jsoned)
+        
 
 class FormatTest(unittest.TestCase):
 
