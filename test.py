@@ -377,6 +377,19 @@ class RegisterTest(FormatTest):
             '1,200'
         )
 
+class OpenerTest(unittest.TestCase):
+    
+    def test_from_file(self):
+        t1 = TableFu.from_file('tests/arra.csv')
+        t2 = TableFu(open('tests/arra.csv'))
+        self.assertEqual(t1.table, t2.table)
+    
+    def test_from_url(self):
+        url = "http://spreadsheets.google.com/pub?key=thJa_BvqQuNdaFfFJMMII0Q&output=csv"
+        t1 = TableFu.from_url(url)
+        t2 = TableFu(urllib2.urlopen(url))
+        self.assertEqual(t1.table, t2.table)
+
 class RemoteTest(unittest.TestCase):
     
     def test_use_url(self):

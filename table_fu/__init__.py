@@ -6,6 +6,8 @@ TableFu parses, sorts and formats table-like streams, like CSVs,
 and outputs tables in HTML. It's meant as a utility to make 
 getting tabular on the web easier.
 """
+from __future__ import with_statement
+
 __version__ = "0.3.0"
 __author__ = "Chris Amico (eyeseast@gmail.com)"
 
@@ -217,6 +219,26 @@ class TableFu(object):
         if not has_json:
             raise ValueError("Couldn't find a JSON library")
         return json.dumps(list(self.dict()), **kwargs)
+    
+    # static methods for loading data
+    @staticmethod
+    def from_file(fn, **options):
+        """
+        Creates a new TableFu instance from a file or path
+        """
+        if hasattr(fn, 'read'):
+            return TableFu(fn, **options)
+        with open(fn) as f:
+            return TableFu(f, **options)
+    
+    @staticmethod
+    def from_url(url, **options):
+        """
+        Downloads the contents of a given URL and loads it
+        into a new TableFu instance
+        """
+        resp = urllib2.urlopen(url)
+        return TableFu(resp, **options)
 
 
 class Row(object):
