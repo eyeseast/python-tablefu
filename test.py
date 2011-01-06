@@ -62,13 +62,13 @@ class RowTest(TableTest):
         "Count rows, not including headings"
         t = TableFu(self.csv_file)
         self.table.pop(0)
-        self.assertEqual(len(t.rows), len(self.table))
+        self.assertEqual(len(list(t.rows)), len(self.table))
         self.assertEqual(len(t), len(self.table))
 
     def test_get_row(self):
         "Get one row by slicing the table"
         t = TableFu(self.csv_file)
-        self.assertEqual(t[1], t.rows[1])
+        self.assertEqual(t[1], list(t.rows)[1])
 
     def test_check_row(self):
         "Check that row numbers are assigned correctly"
@@ -316,6 +316,12 @@ class HTMLTest(TableTest):
 
 class OutputTest(TableTest):
     
+    def setUp(self):
+        self.csv_file = open('tests/arra.csv')
+    
+    def tearDown(self):
+        self.csv_file.close()    
+    
     def test_csv(self):
         t = TableFu(self.csv_file)
         self.csv_file.seek(0)
@@ -342,7 +348,7 @@ class OutputTest(TableTest):
         self.csv_file.seek(0)
         reader = csv.DictReader(self.csv_file)
         jsoned = [row for row in reader]
-        self.assertEqual(t.dict(), jsoned)
+        self.assertEqual(list(t.dict()), jsoned)
         
 
 class FormatTest(unittest.TestCase):

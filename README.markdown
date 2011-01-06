@@ -22,7 +22,7 @@ Usage:
     >>> table[0]
     <Row: Samuel Beckett, Malone Muert, 120, Modernism>
     
-    table.rows
+    list(table.rows)
     [<Row: Samuel Beckett, Malone Muert, 120, Modernism>,
      <Row: James Joyce, Ulysses, 644, Modernism>,
      <Row: Nicholson Baker, Mezannine, 150, Minimalism>,

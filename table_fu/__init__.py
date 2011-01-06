@@ -90,18 +90,18 @@ class TableFu(object):
         return iter(self.rows)
 
     def __len__(self):
-        return len(self.table)
+        return len(list(self.table))
 
     def add_rows(self, *rows):
         for row in rows:
             self.table.append(row)
     
     def count(self):
-        return len(self)
+        return len(list(self))
     
     @property
     def rows(self):
-        return [Row(row, i, self) for i, row in enumerate(self.table)]
+        return (Row(row, i, self) for i, row in enumerate(self.table))
 
     def _get_columns(self):
         if self._columns:
@@ -208,17 +208,15 @@ class TableFu(object):
         writer.writerow(dict(zip(self.columns, self.columns)))
         writer.writerows(dict(row.items()) for row in self.rows)
         
-        result = out.getvalue()
-        out.close()
-        return result
+        return out
     
     def dict(self):
-        return [dict(row.items()) for row in self.rows]
+        return (dict(row.items()) for row in self.rows)
     
     def json(self, **kwargs):
         if not has_json:
             raise ValueError("Couldn't find a JSON library")
-        return json.dumps(self.dict(), **kwargs)
+        return json.dumps(list(self.dict()), **kwargs)
 
 
 class Row(object):
@@ -293,10 +291,10 @@ class Row(object):
         return "<%s: %s>" % (self.__class__.__name__, self.__str__())
 
     def __str__(self):
-        return ', '.join([str(self[column]) for column in self.table.columns])
+        return ', '.join(str(self[column]) for column in self.table.columns)
     
     def as_tr(self):
-        cells = ''.join([d.as_td() for d in self.data])
+        cells = ''.join(d.as_td() for d in self.data)
         return '<tr id="row%s" class="row %s">%s</tr>' % (self.row_num, odd_even(self.row_num), cells)
         
     @property
