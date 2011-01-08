@@ -13,6 +13,8 @@ __author__ = "Chris Amico (eyeseast@gmail.com)"
 
 import csv
 import urllib2
+from copy import copy
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -193,6 +195,18 @@ class TableFu(object):
 
         tables.sort(key=lambda t: t.faceted_on)
         return tables
+    
+    def transpose(self):
+        table = copy(self.table)
+        table.insert(0, self.default_columns)
+        result = [
+            [row[i] for row in table]
+            for i in xrange(len(table[0]))
+        ]
+        
+        options = self.options.copy()
+        options.pop('columns', None)
+        return TableFu(result, **self.options)
     
     # export methods
     def html(self):

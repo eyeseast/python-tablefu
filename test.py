@@ -350,7 +350,27 @@ class OutputTest(TableTest):
         jsoned = [row for row in reader]
         self.assertEqual(list(t.dict()), jsoned)
         
-
+class ManipulationTest(TableTest):
+    
+    def test_transpose(self):
+        t = TableFu(self.table)
+        result = [
+            ['Author', 'Samuel Beckett', 'James Joyce', 'Nicholson Baker', 'Vladimir Sorokin'],
+            ['Best Book', 'Malone Muert', 'Ulysses', 'Mezannine', 'The Queue'],
+            ['Number of Pages', '120', '644', '150', '263'],
+            ['Style', 'Modernism', 'Modernism', 'Minimalism', 'Satire']
+        ]
+        
+        transposed = t.transpose()
+        self.assertEqual(transposed.table, result[1:])
+        self.assertEqual(transposed.columns, [
+            'Author',
+            'Samuel Beckett',
+            'James Joyce',
+            'Nicholson Baker',
+            'Vladimir Sorokin'
+        ])
+        
 class FormatTest(unittest.TestCase):
 
     def setUp(self):
