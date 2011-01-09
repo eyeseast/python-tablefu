@@ -208,6 +208,20 @@ class TableFu(object):
         options.pop('columns', None)
         return TableFu(result, **self.options)
     
+    def map(self, func, *columns):
+        """
+        Map a function to rows, or to given columns
+        """
+        if not columns:
+            return map(func, self.rows)
+        else:
+            values = (self.values(column) for column in columns)
+            result = [map(func, v) for v in values]
+            if len(columns) == 1:
+                return result[0]
+            else:
+                return result
+    
     # export methods
     def html(self):
         table = '<table>\n%s\n%s\n</table>'

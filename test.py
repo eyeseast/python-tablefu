@@ -370,6 +370,33 @@ class ManipulationTest(TableTest):
             'Nicholson Baker',
             'Vladimir Sorokin'
         ])
+    
+    def test_row_map(self):
+        """
+        Test map a function to rows, or a subset of fields
+        """
+        t = TableFu(self.table)
+        result = [s.lower() for s in t.values('Style')]
+        self.assertEqual(result, t.map(lambda row: row['Style'].value.lower()))
+    
+    def test_map_values(self):
+        """
+        Test mapping a function to specific column values
+        """
+        t = TableFu(self.table)
+        result = [s.lower() for s in t.values('Style')]
+        self.assertEqual(result, t.map(str.lower, 'Style'))
+    
+    def test_map_many_values(self):
+        """
+        Test mapping a function to multiple columns
+        """
+        t = TableFu(self.table)
+        result = [
+            [s.lower() for s in t.values(value)]
+            for value in ['Best Book', 'Style']
+        ]
+        self.assertEqual(result, t.map(str.lower, 'Best Book', 'Style'))
         
 class FormatTest(unittest.TestCase):
 
