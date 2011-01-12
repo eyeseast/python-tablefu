@@ -213,6 +213,13 @@ class ValuesTest(TableTest):
         authors = [row[0] for row in self.table]
         self.assertEqual(authors, t.values('Author'))
     
+    def test_unique_values(self):
+        "Adding unique=True returns a set"
+        t = TableFu(self.table)
+        self.table.pop(0)
+        styles = set([row[-1] for row in self.table])
+        self.assertEqual(t.values('Style', unique=True), styles)
+    
     def test_totals(self):
         "Total values for a table across rows"
         t = TableFu(self.csv_file)

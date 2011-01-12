@@ -133,18 +133,21 @@ class TableFu(object):
         self.table.sort(key = lambda row: row[index], reverse=reverse)
         self.options['sorted_by'] = {column_name: {'reverse': reverse}}
 
-    def values(self, column_name):
+    def values(self, column_name, unique=False):
         if column_name not in self.default_columns:
             raise ValueError("%s isn't a column in this table" % column_name)
         index = self.default_columns.index(column_name)
-        return [row[index] for row in self.table]
+        result = [row[index] for row in self.table]
+        if unique:
+            return set(result)
+        return result
     
     def total(self, column_name):
         if column_name not in self.default_columns:
             raise ValueError("%s isn't a column in this table" % column_name)
         
         try:
-            values = [float(v) for v in self.values(column_name)]
+            values = (float(v) for v in self.values(column_name))
         except ValueError:
             raise ValueError('Column %s contains non-numeric values' % column_name)
         
