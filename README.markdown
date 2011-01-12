@@ -1,12 +1,10 @@
-This is a Python implementation of ProPublica's [TableFu](http://propublica.github.com/table-fu/).
-This API is similar, though following Python conventions.
+Python TableFu is a tool for manipulating spreadsheet-like tables in Python. It began as a Python implementation of ProPublica's [TableFu](http://propublica.github.com/table-fu/), though new methods have been added. TableFu allows filtering, faceting and manipulating of data. Going forward, the project aims to create something akin to an ORM for spreadsheets.
 
 Usage:
 ------
 
     >>> from table_fu import TableFu
-    >>> csv = open('tests/test.csv')
-    >>> table = TableFu(csv)
+    >>> table = TableFu.from_file('tests/test.csv')
     >>> table.columns
     ['Author', 'Best Book', 'Number of Pages', 'Style']
 
@@ -17,6 +15,13 @@ Usage:
     # total a column
     >>> table.total('Number of Pages')
     1177.0
+    
+    # filtering a table returns a new instance
+    >>> t2 = table.filter(Style='Modernism')
+    >>> list(t2)
+    [<Row: Samuel Beckett, Malone Muert, 120, Modernism>,
+     <Row: James Joyce, Ulysses, 644, Modernism>]
+    
     
     # each TableFu instance acts like a list of rows
     >>> table[0]
@@ -32,6 +37,20 @@ Usage:
     >>> row = table[1]
     >>> print row['Author']
     James Joyce
+    
+    # transpose a table
+    >>> t2 = table.transpose()
+    >>> list(t2)
+    [<Row: Best Book, Malone Muert, Ulysses, Mezannine, The Queue>,
+     <Row: Number of Pages, 120, 644, 150, 263>,
+     <Row: Style, Modernism, Modernism, Minimalism, Satire>]
+    
+    >>> t2.columns
+    ['Author',
+     'Samuel Beckett',
+     'James Joyce',
+     'Nicholson Baker',
+     'Vladimir Sorokin']
     
     # sort rows
     >>> table.sort('Author')
@@ -59,6 +78,7 @@ Usage:
     Satire
     [['Vladimir Sorokin', 'The Queue', '263', 'Satire']]
 
+Here's an [advanced example](https://gist.github.com/765321) that uses faceting and filtering to produce aggregates from [this spreadsheet](https://spreadsheets.google.com/ccc?key=0AprNP7zjIYS1dG5wbVJpWTVacWpUaUh5VHUxMk1wTEE&hl=en&authkey=CJfB5MYP) (extracted from the New York Times Congress API).
 
 Formatting
 ----------
