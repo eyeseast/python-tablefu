@@ -317,7 +317,7 @@ class HTMLTest(TableTest):
         beckett = t[0]['Author']
         self.assertEqual(
             beckett.as_td(),
-            '<td class="datum">Samuel Beckett</td>'
+            '<td style="" class="datum">Samuel Beckett</td>'
         )
     
     def test_row_tr(self):
@@ -326,13 +326,42 @@ class HTMLTest(TableTest):
         row = t[0]
         self.assertEqual(
             row.as_tr(),
-            '<tr id="row0" class="row even"><td class="datum">Samuel Beckett</td><td class="datum">Malone Muert</td><td class="datum">120</td><td class="datum">Modernism</td></tr>'
+            '<tr id="row0" class="row even"><td style="" class="datum">Samuel Beckett</td><td style="" class="datum">Malone Muert</td><td style="" class="datum">120</td><td style="" class="datum">Modernism</td></tr>'
         )
     
     def test_header_th(self):
         t = TableFu(self.csv_file)
         hed = t.headers[0]
-        self.assertEqual(hed.as_th(), '<th class="header">Author</th>')
+        self.assertEqual(hed.as_th(), '<th style="" class="header">Author</th>')
+
+
+class StyleTest(TableTest):
+    
+    def test_datum_style(self):
+        t = TableFu(self.csv_file, style={'Author': 'text-align:left;'})
+        beckett = t[0]['Author']
+        self.assertEqual(beckett.style, 'text-align:left;')
+    
+    def test_datum_td_style(self):
+        t = TableFu(self.csv_file, style={'Author': 'text-align:left;'})
+        beckett = t[0]['Author']
+        self.assertEqual(
+            beckett.as_td(),
+            '<td style="text-align:left;" class="datum">Samuel Beckett</td>'
+        )
+    
+    def test_header_style(self):
+        t = TableFu(self.csv_file, style={'Author': 'text-align:left;'})
+        hed = t.headers[0]
+        self.assertEqual(hed.style, 'text-align:left;')
+    
+    def test_header_th_style(self):
+        t = TableFu(self.csv_file, style={'Author': 'text-align:left;'})
+        hed = t.headers[0]
+        self.assertEqual(
+            hed.as_th(),
+            '<th style="text-align:left;" class="header">Author</th>'
+        )
 
 
 class OutputTest(TableTest):
@@ -418,7 +447,8 @@ class ManipulationTest(TableTest):
             for value in ['Best Book', 'Style']
         ]
         self.assertEqual(result, t.map(str.lower, 'Best Book', 'Style'))
-        
+
+
 class FormatTest(unittest.TestCase):
 
     def setUp(self):

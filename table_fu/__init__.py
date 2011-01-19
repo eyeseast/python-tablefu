@@ -78,6 +78,7 @@ class TableFu(object):
         self.faceted_on = None
         self.totals = {}
         self.formatting = options.get('formatting', {})
+        self.style = options.get('style', {})
         self.options = options
         if options.has_key('sorted_by'):
             col = options['sorted_by'].keys()[0]
@@ -400,7 +401,14 @@ class Datum(object):
             return self.value == other
     
     def as_td(self):
-        return '<td class="datum">%s</td>' % self.__str__()
+        return '<td style="%s" class="datum">%s</td>' % (self.style or '', self.__str__())
+    
+    def _get_style(self):
+        try:
+            return self.table.style[self.column_name]
+        except KeyError:
+            return None
+    style = property(_get_style)
 
 
 class Header(object):
@@ -425,7 +433,14 @@ class Header(object):
             return self.name == other
     
     def as_th(self):
-        return '<th class="header">%s</th>' % self.__str__()
+        return '<th style="%s" class="header">%s</th>' % (self.style or '', self.__str__())    
+    
+    def _get_style(self):
+        try:
+            return self.table.style[self.name]
+        except KeyError:
+            return None
+    style = property(_get_style)
 
 
 def odd_even(num):
