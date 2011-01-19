@@ -328,6 +328,12 @@ class HTMLTest(TableTest):
             row.as_tr(),
             '<tr id="row0" class="row even"><td class="datum">Samuel Beckett</td><td class="datum">Malone Muert</td><td class="datum">120</td><td class="datum">Modernism</td></tr>'
         )
+    
+    def test_header_th(self):
+        t = TableFu(self.csv_file)
+        hed = t.headers[0]
+        self.assertEqual(hed.as_th(), '<th class="header">Author</th>')
+
 
 class OutputTest(TableTest):
     
