@@ -54,7 +54,15 @@ class ColumnTest(TableTest):
         columns = ['Style', 'Author']
         t.columns = columns
         self.assertEqual(t.columns, columns)
-        
+
+
+class HeaderTest(TableTest):
+    
+    def test_get_headers(self):
+        "Get the table's headers"
+        t = TableFu(self.csv_file)
+        self.assertEqual(t.headers, self.table[0])
+
 
 class RowTest(TableTest):
     

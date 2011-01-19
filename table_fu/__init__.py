@@ -107,6 +107,14 @@ class TableFu(object):
     def rows(self):
         return (Row(row, i, self) for i, row in enumerate(self.table))
 
+    @property
+    def headers(self):
+        if self._columns:
+            col_set = self._columns
+        else:
+            col_set = self.default_columns
+        return [Header(col, i, self) for i, col in enumerate(col_set)]
+
     def _get_columns(self):
         if self._columns:
             return self._columns
@@ -393,6 +401,32 @@ class Datum(object):
     
     def as_td(self):
         return '<td class="datum">%s</td>' % self.__str__()
+
+
+class Header(object):
+    """
+    A header row on a column.
+    """
+    def __init__(self, name, col_num, table):
+        self.name = name
+        self.col_num = col_num
+        self.table = table
+    
+    def __repr__(self):
+        return "<Header: %s>" % (self.name)
+        
+    def __str__(self):
+        return self.name.encode('utf-8')
+    
+    def __eq__(self, other):
+        if type(other) == type(self):
+            return self.name == other.name
+        else:
+            return self.name == other
+    
+    def as_th(self):
+        return '<th class="header">%s</th>' % self.__str__()
+
 
 def odd_even(num):
     if num % 2 == 0:
