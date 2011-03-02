@@ -294,8 +294,6 @@ class OptionsTest(TableTest):
     def test_sort_option_int(self):
         "Sorting the table by an int field, Number of Pages"
         t = TableFu(self.csv_file, sorted_by={"Number of Pages": {'reverse': True}})
-        self.table.pop(0)
-        self.table.sort(key=lambda row: row[0], reverse=True)
         self.assertEqual(t[0].cells[1], 'Atlas Shrugged')
 
 
