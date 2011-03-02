@@ -195,7 +195,7 @@ class ErrorTest(TableTest):
             )
     
     def test_bad_total(self):
-        "Only number-like fields can be totalcled"
+        "Only number-like fields can be totaled"
         t = TableFu(self.csv_file)
         self.assertRaises(ValueError, t.total, 'Author')
 
