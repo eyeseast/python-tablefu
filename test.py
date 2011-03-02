@@ -14,7 +14,8 @@ class TableTest(unittest.TestCase):
             ['Samuel Beckett', 'Malone Muert', '120', 'Modernism'],
             ['James Joyce', 'Ulysses', '644', 'Modernism'],
             ['Nicholson Baker', 'Mezannine', '150', 'Minimalism'],
-            ['Vladimir Sorokin', 'The Queue', '263', 'Satire']]
+            ['Vladimir Sorokin', 'The Queue', '263', 'Satire'],
+            ['Ayn Rand', 'Atlas Shrugged', '1088', 'Science fiction']]
 
     def tearDown(self):
         self.csv_file.close()
@@ -194,7 +195,7 @@ class ErrorTest(TableTest):
             )
     
     def test_bad_total(self):
-        "Only number-like fields can be totaled"
+        "Only number-like fields can be totalcled"
         t = TableFu(self.csv_file)
         self.assertRaises(ValueError, t.total, 'Author')
 
@@ -280,14 +281,22 @@ class FilterTest(TableTest):
         f = t.filter(State='ALABAMA', County='COLBERT')
         self.assertEqual(f.count(), 5)
 
+
 class OptionsTest(TableTest):
     
-    def test_sort_option(self):
-        "Pass in options as keyword arguments"
+    def test_sort_option_str(self):
+        "Sort the table by a string field, Author"
         t = TableFu(self.csv_file, sorted_by={"Author": {'reverse': True}})
         self.table.pop(0)
         self.table.sort(key=lambda row: row[0], reverse=True)
         self.assertEqual(t[0].cells, self.table[0])
+    
+    def test_sort_option_int(self):
+        "Sorting the table by an int field, Number of Pages"
+        t = TableFu(self.csv_file, sorted_by={"Number of Pages": {'reverse': True}})
+        self.table.pop(0)
+        self.table.sort(key=lambda row: row[0], reverse=True)
+        self.assertEqual(t[0].cells[1], 'Atlas Shrugged')
 
 
 class DatumFormatTest(TableTest):
@@ -399,16 +408,17 @@ class OutputTest(TableTest):
         reader = csv.DictReader(self.csv_file)
         jsoned = [row for row in reader]
         self.assertEqual(list(t.dict()), jsoned)
-        
+
+
 class ManipulationTest(TableTest):
     
     def test_transpose(self):
         t = TableFu(self.table)
         result = [
-            ['Author', 'Samuel Beckett', 'James Joyce', 'Nicholson Baker', 'Vladimir Sorokin'],
-            ['Best Book', 'Malone Muert', 'Ulysses', 'Mezannine', 'The Queue'],
-            ['Number of Pages', '120', '644', '150', '263'],
-            ['Style', 'Modernism', 'Modernism', 'Minimalism', 'Satire']
+            ['Author', 'Samuel Beckett', 'James Joyce', 'Nicholson Baker', 'Vladimir Sorokin', 'Ayn Rand'],
+            ['Best Book', 'Malone Muert', 'Ulysses', 'Mezannine', 'The Queue', 'Atlas Shrugged'],
+            ['Number of Pages', '120', '644', '150', '263', '1088'],
+            ['Style', 'Modernism', 'Modernism', 'Minimalism', 'Satire', 'Science fiction']
         ]
         
         transposed = t.transpose()
@@ -418,7 +428,8 @@ class ManipulationTest(TableTest):
             'Samuel Beckett',
             'James Joyce',
             'Nicholson Baker',
-            'Vladimir Sorokin'
+            'Vladimir Sorokin',
+            'Ayn Rand',
         ])
     
     def test_row_map(self):
