@@ -14,7 +14,8 @@ class TableTest(unittest.TestCase):
             ['Samuel Beckett', 'Malone Muert', '120', 'Modernism'],
             ['James Joyce', 'Ulysses', '644', 'Modernism'],
             ['Nicholson Baker', 'Mezannine', '150', 'Minimalism'],
-            ['Vladimir Sorokin', 'The Queue', '263', 'Satire']]
+            ['Vladimir Sorokin', 'The Queue', '263', 'Satire'],
+            ['Ayn Rand', 'Atlas Shrugged', '1088', 'Science fiction']]
 
     def tearDown(self):
         self.csv_file.close()
@@ -54,7 +55,15 @@ class ColumnTest(TableTest):
         columns = ['Style', 'Author']
         t.columns = columns
         self.assertEqual(t.columns, columns)
-        
+
+
+class HeaderTest(TableTest):
+    
+    def test_get_headers(self):
+        "Get the table's headers"
+        t = TableFu(self.csv_file)
+        self.assertEqual(t.headers, self.table[0])
+
 
 class RowTest(TableTest):
     
@@ -272,14 +281,20 @@ class FilterTest(TableTest):
         f = t.filter(State='ALABAMA', County='COLBERT')
         self.assertEqual(f.count(), 5)
 
+
 class OptionsTest(TableTest):
     
-    def test_sort_option(self):
-        "Pass in options as keyword arguments"
+    def test_sort_option_str(self):
+        "Sort the table by a string field, Author"
         t = TableFu(self.csv_file, sorted_by={"Author": {'reverse': True}})
         self.table.pop(0)
         self.table.sort(key=lambda row: row[0], reverse=True)
         self.assertEqual(t[0].cells, self.table[0])
+    
+    def test_sort_option_int(self):
+        "Sorting the table by an int field, Number of Pages"
+        t = TableFu(self.csv_file, sorted_by={"Number of Pages": {'reverse': True}})
+        self.assertEqual(t[0].cells[1], 'Atlas Shrugged')
 
 
 class DatumFormatTest(TableTest):
@@ -309,7 +324,7 @@ class HTMLTest(TableTest):
         beckett = t[0]['Author']
         self.assertEqual(
             beckett.as_td(),
-            '<td class="datum">Samuel Beckett</td>'
+            '<td style="" class="datum">Samuel Beckett</td>'
         )
     
     def test_row_tr(self):
@@ -318,8 +333,43 @@ class HTMLTest(TableTest):
         row = t[0]
         self.assertEqual(
             row.as_tr(),
-            '<tr id="row0" class="row even"><td class="datum">Samuel Beckett</td><td class="datum">Malone Muert</td><td class="datum">120</td><td class="datum">Modernism</td></tr>'
+            '<tr id="row0" class="row even"><td style="" class="datum">Samuel Beckett</td><td style="" class="datum">Malone Muert</td><td style="" class="datum">120</td><td style="" class="datum">Modernism</td></tr>'
         )
+    
+    def test_header_th(self):
+        t = TableFu(self.csv_file)
+        hed = t.headers[0]
+        self.assertEqual(hed.as_th(), '<th style="" class="header">Author</th>')
+
+
+class StyleTest(TableTest):
+    
+    def test_datum_style(self):
+        t = TableFu(self.csv_file, style={'Author': 'text-align:left;'})
+        beckett = t[0]['Author']
+        self.assertEqual(beckett.style, 'text-align:left;')
+    
+    def test_datum_td_style(self):
+        t = TableFu(self.csv_file, style={'Author': 'text-align:left;'})
+        beckett = t[0]['Author']
+        self.assertEqual(
+            beckett.as_td(),
+            '<td style="text-align:left;" class="datum">Samuel Beckett</td>'
+        )
+    
+    def test_header_style(self):
+        t = TableFu(self.csv_file, style={'Author': 'text-align:left;'})
+        hed = t.headers[0]
+        self.assertEqual(hed.style, 'text-align:left;')
+    
+    def test_header_th_style(self):
+        t = TableFu(self.csv_file, style={'Author': 'text-align:left;'})
+        hed = t.headers[0]
+        self.assertEqual(
+            hed.as_th(),
+            '<th style="text-align:left;" class="header">Author</th>'
+        )
+
 
 class OutputTest(TableTest):
     
@@ -356,16 +406,17 @@ class OutputTest(TableTest):
         reader = csv.DictReader(self.csv_file)
         jsoned = [row for row in reader]
         self.assertEqual(list(t.dict()), jsoned)
-        
+
+
 class ManipulationTest(TableTest):
     
     def test_transpose(self):
         t = TableFu(self.table)
         result = [
-            ['Author', 'Samuel Beckett', 'James Joyce', 'Nicholson Baker', 'Vladimir Sorokin'],
-            ['Best Book', 'Malone Muert', 'Ulysses', 'Mezannine', 'The Queue'],
-            ['Number of Pages', '120', '644', '150', '263'],
-            ['Style', 'Modernism', 'Modernism', 'Minimalism', 'Satire']
+            ['Author', 'Samuel Beckett', 'James Joyce', 'Nicholson Baker', 'Vladimir Sorokin', 'Ayn Rand'],
+            ['Best Book', 'Malone Muert', 'Ulysses', 'Mezannine', 'The Queue', 'Atlas Shrugged'],
+            ['Number of Pages', '120', '644', '150', '263', '1088'],
+            ['Style', 'Modernism', 'Modernism', 'Minimalism', 'Satire', 'Science fiction']
         ]
         
         transposed = t.transpose()
@@ -375,7 +426,8 @@ class ManipulationTest(TableTest):
             'Samuel Beckett',
             'James Joyce',
             'Nicholson Baker',
-            'Vladimir Sorokin'
+            'Vladimir Sorokin',
+            'Ayn Rand',
         ])
     
     def test_row_map(self):
@@ -404,7 +456,8 @@ class ManipulationTest(TableTest):
             for value in ['Best Book', 'Style']
         ]
         self.assertEqual(result, t.map(str.lower, 'Best Book', 'Style'))
-        
+
+
 class FormatTest(unittest.TestCase):
 
     def setUp(self):

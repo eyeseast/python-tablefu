@@ -78,6 +78,7 @@ class TableFu(object):
         self.faceted_on = None
         self.totals = {}
         self.formatting = options.get('formatting', {})
+        self.style = options.get('style', {})
         self.options = options
         if options.has_key('sorted_by'):
             col = options['sorted_by'].keys()[0]
@@ -106,6 +107,14 @@ class TableFu(object):
     @property
     def rows(self):
         return (Row(row, i, self) for i, row in enumerate(self.table))
+
+    @property
+    def headers(self):
+        if self._columns:
+            col_set = self._columns
+        else:
+            col_set = self.default_columns
+        return [Header(col, i, self) for i, col in enumerate(col_set)]
 
     def _get_columns(self):
         if self._columns:
@@ -392,7 +401,47 @@ class Datum(object):
             return self.value == other
     
     def as_td(self):
-        return '<td class="datum">%s</td>' % self.__str__()
+        return '<td style="%s" class="datum">%s</td>' % (self.style or '', self.__str__())
+    
+    def _get_style(self):
+        try:
+            return self.table.style[self.column_name]
+        except KeyError:
+            return None
+    style = property(_get_style)
+
+
+class Header(object):
+    """
+    A header row on a column.
+    """
+    def __init__(self, name, col_num, table):
+        self.name = name
+        self.col_num = col_num
+        self.table = table
+    
+    def __repr__(self):
+        return "<Header: %s>" % (self.name)
+        
+    def __str__(self):
+        return self.name.encode('utf-8')
+    
+    def __eq__(self, other):
+        if type(other) == type(self):
+            return self.name == other.name
+        else:
+            return self.name == other
+    
+    def as_th(self):
+        return '<th style="%s" class="header">%s</th>' % (self.style or '', self.__str__())    
+    
+    def _get_style(self):
+        try:
+            return self.table.style[self.name]
+        except KeyError:
+            return None
+    style = property(_get_style)
+
 
 def odd_even(num):
     if num % 2 == 0:
