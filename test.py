@@ -513,5 +513,21 @@ class RemoteTest(unittest.TestCase):
         self.assertEqual(columns, t.columns)
 
 
+class UpdateTest(TableTest):
+    """
+    Tests for things that update or otherwise transform data
+    """
+    def test_transform_to_int(self):
+        """
+        Convert the Number of Pages field to integers
+        """
+        t = TableFu(self.csv_file)
+        pages = t.values('Number of Pages')
+        t.transform('Number of Pages', int)
+        for s, i in zip(pages, t.values('Number of Pages')):
+            self.assertEqual(int(s), i)
+        
+
+
 if __name__ == '__main__':
     unittest.main()

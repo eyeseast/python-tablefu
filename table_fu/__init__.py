@@ -142,6 +142,19 @@ class TableFu(object):
         self.table.sort(key = lambda row: row[index], reverse=reverse)
         self.options['sorted_by'] = {column_name: {'reverse': reverse}}
 
+    def transform(self, column_name, func):
+        if column_name not in self.default_columns:
+            raise ValueError("%s isn't a column in this table" % column_name)
+
+        if not callable(func):
+            raise TypeError("%s isn't callable" % func)
+
+        index = self.default_columns.index(column_name)
+        for row in self.table:
+            val = row[index]
+            val = func(val)
+            row[index] = val
+
     def values(self, column_name, unique=False):
         if column_name not in self.default_columns:
             raise ValueError("%s isn't a column in this table" % column_name)
