@@ -17,10 +17,13 @@ setup(
     license = "MIT",
     platforms = ['any'],
     classifiers = [
-                   "Intended Audience :: Developers",
-                   "Natural Language :: English",
-                   "Operating System :: OS Independent",
-                   "Programming Language :: Python",
-                   "Topic :: Software Development :: Libraries :: Python Modules",
-                   ],
+       "Intended Audience :: Developers",
+       "Natural Language :: English",
+       "Operating System :: OS Independent",
+       "Programming Language :: Python",
+       "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+    install_requires=[
+        'latimes-statestyle==0.1.2',
+    ],
 )

@@ -486,6 +486,41 @@ class RegisterTest(FormatTest):
             self.format(1200, 'intcomma'),
             '1,200'
         )
+    
+    def test_ap_state(self):
+        "Return AP state style of a state"
+        self.assertEqual(
+            self.format(6, 'ap_state'),
+            'Calif.'
+        )
+        self.assertEqual(
+            self.format('California', 'ap_state'),
+            'Calif.'
+        )
+        self.assertEqual(
+            self.format('CA', 'ap_state'),
+            'Calif.'
+        )
+        self.assertEqual(
+            self.format('California', 'ap_state'),
+            'Calif.'
+        )
+        self.assertEqual(
+            self.format('foo', 'ap_state'),
+            'foo'
+        )
+    
+    def test_stateface(self):
+        "Returns ProPublica stateface"
+        self.assertEqual(
+            self.format('California', 'stateface'),
+            'E'
+        )
+        self.assertEqual(
+            self.format('Wyo.', 'stateface'),
+            'x'
+        )
+
 
 class OpenerTest(unittest.TestCase):
     

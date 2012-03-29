@@ -4,6 +4,42 @@ Inspired by James Bennett's template_utils and Django's
 template filters.
 """
 import re
+import statestyle
+
+
+def ap_state(value):
+    """
+    Converts a state's name, postal abbreviation or FIPS to A.P. style.
+    
+    Example usage:
+    
+        >> ap_state("California")
+        'Calif.'
+    
+    """
+    try:
+        return statestyle.get(value).ap
+    except:
+        return value
+
+
+def stateface(value):
+    """
+    Converts a state's name, postal abbreviation or FIPS to ProPublica's stateface
+    font code.
+    
+    Example usage:
+    
+        >> stateface("California")
+        'E'
+    
+    Documentation: http://propublica.github.com/stateface/
+    """
+    try:
+        return statestyle.get(value).stateface
+    except:
+        return value
+
 
 def intcomma(value):
     """
@@ -19,17 +55,21 @@ def intcomma(value):
     else:
         return intcomma(new)
 
+
 def dollars(value):
     return u'$%s'% intcomma(value)
+
 
 def link(title, url):
     return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
 
 
 DEFAULT_FORMATTERS = {
-    'link': link,
+    'ap_state': ap_state,
+    'dollars': dollars,
     'intcomma': intcomma,
-    'dollars': dollars
+    'link': link,
+    'stateface': stateface,
 }
 
 class Formatter(object):
