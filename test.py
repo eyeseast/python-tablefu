@@ -570,6 +570,21 @@ class RegisterTest(FormatTest):
             'N/A'
         )
     
+    def test_percent_change(self):
+        "Converts a floating point value into a percentage change value."
+        self.assertEqual(
+            self.format(0.02, 'percent_change'),
+            '+2.0%'
+        )
+        self.assertEqual(
+            self.format(-0.10560, 'percent_change'),
+            '-10.6%'
+        )
+        self.assertEqual(
+            self.format('foo', 'percent_change'),
+            'N/A'
+        )
+    
     def test_stateface(self):
         "Returns ProPublica stateface"
         self.assertEqual(
