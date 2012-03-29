@@ -41,6 +41,22 @@ def stateface(value):
         return value
 
 
+def state_postal(value):
+    """
+    Converts a state's name, or FIPS to its postal abbreviation
+    
+    Example usage:
+    
+        >> ap_state("California")
+        'Calif.'
+    
+    """
+    try:
+        return statestyle.get(value).postal
+    except:
+        return value
+
+
 def intcomma(value):
     """
     Borrowed from django.contrib.humanize
@@ -70,6 +86,7 @@ DEFAULT_FORMATTERS = {
     'intcomma': intcomma,
     'link': link,
     'stateface': stateface,
+    'state_postal': state_postal,
 }
 
 class Formatter(object):

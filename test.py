@@ -520,6 +520,21 @@ class RegisterTest(FormatTest):
             self.format('Wyo.', 'stateface'),
             'x'
         )
+    
+    def test_state_postal(self):
+        "Returns a state's postal code"
+        self.assertEqual(
+            self.format('California', 'state_postal'),
+            'CA'
+        )
+        self.assertEqual(
+            self.format('Wyo.', 'state_postal'),
+            'WY'
+        )
+        self.assertEqual(
+            self.format('foo', 'state_postal'),
+            'foo'
+        )
 
 
 class OpenerTest(unittest.TestCase):
