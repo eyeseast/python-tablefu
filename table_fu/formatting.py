@@ -157,6 +157,19 @@ def percent_change(value, decimal_places=1, multiply=True, failure_string='N/A')
         return s + '%'
 
 
+def ratio(value, decimal_places=0, failure_string='N/A'):
+    """
+    Converts a floating point value a X:1 ratio.
+    
+    Number of decimal places set by the `precision` kwarg. Default is one.
+    """
+    try:
+        f = float(value)
+    except ValueError:
+        return failure_string
+    return _saferound(f, decimal_places) + ':1'
+
+
 def stateface(value):
     """
     Converts a state's name, postal abbreviation or FIPS to ProPublica's stateface
@@ -218,6 +231,7 @@ DEFAULT_FORMATTERS = {
     'link': link,
     'percentage': percentage,
     'percent_change': percent_change,
+    'ratio': ratio,
     'stateface': stateface,
     'state_postal': state_postal,
     'title': title,

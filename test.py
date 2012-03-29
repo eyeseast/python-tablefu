@@ -585,6 +585,25 @@ class RegisterTest(FormatTest):
             'N/A'
         )
     
+    def test_ratio(self):
+        "Converts a floating point value a X:1 ratio."
+        self.assertEqual(
+            self.format(1, 'ratio'),
+            '1:1'
+        )
+        self.assertEqual(
+            self.format(2, 'ratio'),
+            '2:1'
+        )
+        self.assertEqual(
+            self.format(2.2, 'ratio'),
+            '2:1'
+        )
+        self.assertEqual(
+            self.format('foo', 'ratio'),
+            'N/A'
+        )
+    
     def test_stateface(self):
         "Returns ProPublica stateface"
         self.assertEqual(
