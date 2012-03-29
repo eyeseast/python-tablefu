@@ -7,6 +7,22 @@ import re
 import statestyle
 
 
+def ap_state(value):
+    """
+    Converts a state's name, postal abbreviation or FIPS to A.P. style.
+    
+    Example usage:
+    
+        >> ap_state("California")
+        'Calif.'
+    
+    """
+    try:
+        return statestyle.get(value).ap
+    except:
+        return value
+
+
 def capfirst(value, failure_string='N/A'):
     """
     Capitalizes the first character of the value.
@@ -23,20 +39,49 @@ def capfirst(value, failure_string='N/A'):
         return failure_string
 
 
-def ap_state(value):
+def dollars(value):
+    return u'$%s'% intcomma(value)
+
+
+def dollar_signs(value, failure_string='N/A'):
     """
-    Converts a state's name, postal abbreviation or FIPS to A.P. style.
+    Converts an integer into the corresponding number of dollar sign symbols.
     
-    Example usage:
+    If the submitted value isn't a string, returns the `failure_string` keyword
+    argument.
     
-        >> ap_state("California")
-        'Calif.'
-    
+    Meant to emulate the illustration of price range on Yelp.
     """
     try:
-        return statestyle.get(value).ap
-    except:
-        return value
+        count = int(value)
+    except ValueError:
+        return failure_string
+    string = ''
+    for i in range(0, count):
+        string += '$'
+    return string
+
+
+def link(title, url):
+    return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {
+        'url': url,
+        'title': title
+    }
+
+
+def intcomma(value):
+    """
+    Borrowed from django.contrib.humanize
+    
+    Converts an integer to a string containing commas every three digits.
+    For example, 3000 becomes '3,000' and 45000 becomes '45,000'.
+    """
+    orig = str(value)
+    new = re.sub("^(-?\d+)(\d{3})", '\g<1>,\g<2>', orig)
+    if orig == new:
+        return new
+    else:
+        return intcomma(new)
 
 
 def stateface(value):
@@ -73,38 +118,17 @@ def state_postal(value):
         return value
 
 
-def intcomma(value):
-    """
-    Borrowed from django.contrib.humanize
-    
-    Converts an integer to a string containing commas every three digits.
-    For example, 3000 becomes '3,000' and 45000 becomes '45,000'.
-    """
-    orig = str(value)
-    new = re.sub("^(-?\d+)(\d{3})", '\g<1>,\g<2>', orig)
-    if orig == new:
-        return new
-    else:
-        return intcomma(new)
-
-
-def dollars(value):
-    return u'$%s'% intcomma(value)
-
-
-def link(title, url):
-    return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
-
-
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
     'capfirst': capfirst,
     'dollars': dollars,
+    'dollar_signs': dollar_signs,
     'intcomma': intcomma,
     'link': link,
     'stateface': stateface,
     'state_postal': state_postal,
 }
+
 
 class Formatter(object):
     """

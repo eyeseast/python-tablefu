@@ -533,6 +533,21 @@ class RegisterTest(FormatTest):
             'N/A'
         )
     
+    def test_dollar_signs(self):
+        "Converts an integer into the corresponding number of dollar sign symbols."
+        self.assertEqual(
+            self.format(1, 'dollar_signs'),
+            '$'
+        )
+        self.assertEqual(
+            self.format(5, 'dollar_signs'),
+            '$$$$$'
+        )
+        self.assertEqual(
+            self.format('foo', 'dollar_signs'),
+            'N/A'
+        )
+    
     def test_stateface(self):
         "Returns ProPublica stateface"
         self.assertEqual(
