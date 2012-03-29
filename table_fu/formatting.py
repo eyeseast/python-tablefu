@@ -7,6 +7,22 @@ import re
 import statestyle
 
 
+def capfirst(value, failure_string='N/A'):
+    """
+    Capitalizes the first character of the value.
+    
+    If the submitted value isn't a string, returns the `failure_string` keyword
+    argument.
+    
+    Cribbs from django's default filter set
+    """
+    try:
+        value = value.lower()
+        return value[0].upper() + value[1:]
+    except:
+        return failure_string
+
+
 def ap_state(value):
     """
     Converts a state's name, postal abbreviation or FIPS to A.P. style.
@@ -82,6 +98,7 @@ def link(title, url):
 
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
+    'capfirst': capfirst,
     'dollars': dollars,
     'intcomma': intcomma,
     'link': link,

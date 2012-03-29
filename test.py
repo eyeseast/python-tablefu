@@ -510,6 +510,29 @@ class RegisterTest(FormatTest):
             'foo'
         )
     
+    def test_capfirst(self):
+        "Returns a string with only the first character capitalized"
+        self.assertEqual(
+            self.format('ALLCAPS', 'capfirst'),
+            'Allcaps'
+        )
+        self.assertEqual(
+            self.format('whisper', 'capfirst'),
+            'Whisper'
+        )
+        self.assertEqual(
+            self.format('CaMeLcAsE', 'capfirst'),
+            'Camelcase'
+        )
+        self.assertEqual(
+            self.format('', 'capfirst'),
+            'N/A'
+        )
+        self.assertEqual(
+            self.format(1, 'capfirst'),
+            'N/A'
+        )
+    
     def test_stateface(self):
         "Returns ProPublica stateface"
         self.assertEqual(
