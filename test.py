@@ -555,6 +555,21 @@ class RegisterTest(FormatTest):
             '<img src="http://lorempixel.com/400/200/" style="">'
         )
     
+    def test_percentage(self):
+        "Converts a floating point value into a percentage value."
+        self.assertEqual(
+            self.format(0.02, 'percentage'),
+            '2.0%'
+        )
+        self.assertEqual(
+            self.format(0.10560, 'percentage'),
+            '10.6%'
+        )
+        self.assertEqual(
+            self.format('foo', 'percentage'),
+            'N/A'
+        )
+    
     def test_stateface(self):
         "Returns ProPublica stateface"
         self.assertEqual(

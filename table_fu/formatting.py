@@ -7,6 +7,18 @@ import re
 import statestyle
 
 
+def _saferound(value, decimal_places):
+    """
+    Rounds a float value off to the desired precision
+    """
+    try:
+        f = float(value)
+    except ValueError:
+        return ''
+    format = '%%.%df' % decimal_places
+    return format % f
+
+
 def ap_state(value):
     """
     Converts a state's name, postal abbreviation or FIPS to A.P. style.
@@ -99,6 +111,27 @@ def intcomma(value):
         return intcomma(new)
 
 
+def percentage(value, decimal_places=1, multiply=True, failure_string='N/A'):
+    """
+    Converts a floating point value into a percentage value.
+    
+    Number of decimal places set by the `decimal_places` kwarg. Default is one.
+    
+    By default the number is multiplied by 100. You can prevent it from doing
+    that by setting the `multiply` keyword argument to False.
+    
+    If the submitted value isn't a string, returns the `failure_string` keyword
+    argument.
+    """
+    try:
+        value = float(value)
+    except ValueError:
+        return failure_string
+    if multiply:
+        value = value * 100
+    return _saferound(value, decimal_places) + '%'
+
+
 def stateface(value):
     """
     Converts a state's name, postal abbreviation or FIPS to ProPublica's stateface
@@ -141,6 +174,7 @@ DEFAULT_FORMATTERS = {
     'intcomma': intcomma,
     'image': image,
     'link': link,
+    'percentage': percentage,
     'stateface': stateface,
     'state_postal': state_postal,
 }
