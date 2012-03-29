@@ -191,6 +191,23 @@ def state_postal(value):
         return value
 
 
+def title(value, failure_string='N/A'):
+    """
+    Converts a string into titlecase.
+    
+    Lifted from Django.
+    """
+    try:
+        value = value.lower()
+        t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
+        result = re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
+        if not result:
+            return failure_string
+        return result
+    except:
+        return failure_string
+
+
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
     'capfirst': capfirst,
@@ -203,6 +220,7 @@ DEFAULT_FORMATTERS = {
     'percent_change': percent_change,
     'stateface': stateface,
     'state_postal': state_postal,
+    'title': title,
 }
 
 

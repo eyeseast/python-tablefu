@@ -610,6 +610,29 @@ class RegisterTest(FormatTest):
             self.format('foo', 'state_postal'),
             'foo'
         )
+    
+    def test_title(self):
+        "Converts a string into titlecase."
+        self.assertEqual(
+            self.format('ALLCAPS YO', 'title'),
+            'Allcaps Yo'
+        )
+        self.assertEqual(
+            self.format('whisper ing', 'title'),
+            'Whisper Ing'
+        )
+        self.assertEqual(
+            self.format('CaMeLcAsE', 'title'),
+            'Camelcase'
+        )
+        self.assertEqual(
+            self.format('', 'title'),
+            'N/A'
+        )
+        self.assertEqual(
+            self.format(1, 'title'),
+            'N/A'
+        )
 
 
 class OpenerTest(unittest.TestCase):
