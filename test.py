@@ -547,6 +547,13 @@ class RegisterTest(FormatTest):
             self.format('foo', 'dollar_signs'),
             'N/A'
         )
+
+    def test_image(self):
+        "Returns an HTML image tag"
+        self.assertEqual(
+            self.format('http://lorempixel.com/400/200/', 'image'),
+            '<img src="http://lorempixel.com/400/200/" style="">'
+        )
     
     def test_stateface(self):
         "Returns ProPublica stateface"

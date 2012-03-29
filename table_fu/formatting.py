@@ -62,6 +62,21 @@ def dollar_signs(value, failure_string='N/A'):
     return string
 
 
+def image(value, width='', height=''):
+    """
+    Accepts a URL and returns an HTML image tag ready to be displayed.
+    
+    Optionally, you can set the height and width with keyword arguments.
+    """
+    style = ""
+    if width:
+        style += "width:%s" % width
+    if height:
+        style += "height:%s" % height
+    data_dict = dict(src=value, style=style)
+    return '<img src="%(src)s" style="%(style)s">' % data_dict
+
+
 def link(title, url):
     return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {
         'url': url,
@@ -124,6 +139,7 @@ DEFAULT_FORMATTERS = {
     'dollars': dollars,
     'dollar_signs': dollar_signs,
     'intcomma': intcomma,
+    'image': image,
     'link': link,
     'stateface': stateface,
     'state_postal': state_postal,
