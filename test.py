@@ -293,8 +293,11 @@ class OptionsTest(TableTest):
     
     def test_sort_option_int(self):
         "Sorting the table by an int field, Number of Pages"
-        t = TableFu(self.csv_file, sorted_by={"Number of Pages": {'reverse': True}})
-        self.assertEqual(t[0].cells[1], 'Atlas Shrugged')
+        t = TableFu(self.csv_file)
+        pages = t.values('Number of Pages')
+        pages = sorted(pages, reverse=True)
+        t.sort('Number of Pages', reverse=True)
+        self.assertEqual(t.values('Number of Pages'), pages)
 
 
 class DatumFormatTest(TableTest):

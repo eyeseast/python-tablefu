@@ -4,7 +4,7 @@ This is a Python version of Propublica's TableFu Ruby library.
 
 TableFu parses, sorts and formats table-like streams, like CSVs,
 and outputs tables in HTML. It's meant as a utility to make 
-getting tabular on the web easier.
+getting tabular data on the web easier.
 """
 from __future__ import with_statement
 
