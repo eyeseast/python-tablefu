@@ -1,3 +1,2 @@
 include README*
 include tests/*
-recursive-include *.py
