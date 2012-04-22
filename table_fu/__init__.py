@@ -8,7 +8,7 @@ getting tabular data on the web easier.
 """
 from __future__ import with_statement
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 __author__ = "Chris Amico (eyeseast@gmail.com)"
 
 import csv

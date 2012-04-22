@@ -6,7 +6,7 @@ long_description = open('README.markdown').read()
 
 setup(
     name = "python-tablefu",
-    version = "0.4.1",
+    version = "0.4.2",
     author = "Chris Amico",
     author_email = "eyeseast@gmail.com",
     description = "A tool for manipulating spreadsheets and tables in Python, based on ProPublica's TableFu",
