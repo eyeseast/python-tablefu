@@ -476,7 +476,6 @@ class RegisterTest(FormatTest):
             args = list(args)
             args.insert(0, value)
             return args
-
         self.format.register(test)
         self.assertEqual(test, self.format._filters['test'])
     
@@ -509,6 +508,10 @@ class RegisterTest(FormatTest):
             self.format('foo', 'ap_state'),
             'foo'
         )
+        self.assertEqual(
+            self.format('foo', 'ap_state', failure_string='bar'),
+            'bar'
+        )
     
     def test_capfirst(self):
         "Returns a string with only the first character capitalized"
@@ -532,6 +535,10 @@ class RegisterTest(FormatTest):
             self.format(1, 'capfirst'),
             'N/A'
         )
+        self.assertEqual(
+            self.format(1, 'capfirst', failure_string='bar'),
+            'bar'
+        )
     
     def test_dollar_signs(self):
         "Converts an integer into the corresponding number of dollar sign symbols."
@@ -547,7 +554,11 @@ class RegisterTest(FormatTest):
             self.format('foo', 'dollar_signs'),
             'N/A'
         )
-
+        self.assertEqual(
+            self.format('foo', 'dollar_signs', failure_string='bar'),
+            'bar'
+        )
+    
     def test_image(self):
         "Returns an HTML image tag"
         self.assertEqual(
@@ -566,8 +577,20 @@ class RegisterTest(FormatTest):
             '10.6%'
         )
         self.assertEqual(
+            self.format(0.10560, 'percentage', multiply=False),
+            '0.1%'
+        )
+        self.assertEqual(
+            self.format(0.10560, 'percentage', decimal_places=3),
+            '10.560%'
+        )
+        self.assertEqual(
             self.format('foo', 'percentage'),
             'N/A'
+        )
+        self.assertEqual(
+            self.format('foo', 'percentage', failure_string='bar'),
+            'bar'
         )
     
     def test_percent_change(self):
@@ -581,8 +604,20 @@ class RegisterTest(FormatTest):
             '-10.6%'
         )
         self.assertEqual(
+            self.format(-0.10560, 'percent_change', multiply=False),
+            '-0.1%'
+        )
+        self.assertEqual(
+            self.format(-0.10560, 'percent_change', decimal_places=3),
+            '-10.560%'
+        )
+        self.assertEqual(
             self.format('foo', 'percent_change'),
             'N/A'
+        )
+        self.assertEqual(
+            self.format('foo', 'percent_change', failure_string='bar'),
+            'bar'
         )
     
     def test_ratio(self):
@@ -602,6 +637,10 @@ class RegisterTest(FormatTest):
         self.assertEqual(
             self.format('foo', 'ratio'),
             'N/A'
+        )
+        self.assertEqual(
+            self.format('foo', 'ratio', failure_string='bar'),
+            'bar'
         )
     
     def test_stateface(self):

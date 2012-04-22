@@ -399,12 +399,11 @@ class Datum(object):
         if self.table.formatting.has_key(self.column_name):
             func = self.table.formatting[self.column_name].get('filter', None)
             args = self.table.formatting[self.column_name].get('args', [])
-            
+            kwargs = self.table.formatting[self.column_name].get('options', {})
             if func:
                 row = self.table[self.row_num]
                 args = [row[arg].value for arg in args]
-                return format(self.value, func, *args)
-                
+                return format(self.value, func, *args, **kwargs)
         return self.value
     
     def __eq__(self, other):
