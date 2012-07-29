@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Python TableFu by eyeseast</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Python TableFu</h1>
+        <p>A Python version (almost a port) of ProPublica's TableFu</p>
+
+        <p class="view"><a href="https://github.com/eyeseast/python-tablefu">View the Project on GitHub <small>eyeseast/python-tablefu</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/eyeseast/python-tablefu/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/eyeseast/python-tablefu/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/eyeseast/python-tablefu">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>Python TableFu is a tool for manipulating spreadsheet-like tables in Python. It began as a Python implementation of ProPublica's <a href="http://propublica.github.com/table-fu/">TableFu</a>, though new methods have been added. TableFu allows filtering, faceting and manipulating of data. Going forward, the project aims to create something akin to an ORM for spreadsheets.</p>
+
+<h2>Usage:</h2>
+
+<pre><code>&gt;&gt;&gt; from table_fu import TableFu
+&gt;&gt;&gt; table = TableFu.from_file('tests/test.csv')
+&gt;&gt;&gt; table.columns
+['Author', 'Best Book', 'Number of Pages', 'Style']
+
+# get all authors
+&gt;&gt;&gt; table.values('Author')
+['Samuel Beckett', 'James Joyce', 'Nicholson Baker', 'Vladimir Sorokin']
+
+# total a column
+&gt;&gt;&gt; table.total('Number of Pages')
+1177.0
+
+# filtering a table returns a new instance
+&gt;&gt;&gt; t2 = table.filter(Style='Modernism')
+&gt;&gt;&gt; list(t2)
+[&lt;Row: Samuel Beckett, Malone Muert, 120, Modernism&gt;,
+ &lt;Row: James Joyce, Ulysses, 644, Modernism&gt;]
+
+
+# each TableFu instance acts like a list of rows
+&gt;&gt;&gt; table[0]
+&lt;Row: Samuel Beckett, Malone Muert, 120, Modernism&gt;
+
+list(table.rows)
+[&lt;Row: Samuel Beckett, Malone Muert, 120, Modernism&gt;,
+ &lt;Row: James Joyce, Ulysses, 644, Modernism&gt;,
+ &lt;Row: Nicholson Baker, Mezannine, 150, Minimalism&gt;,
+ &lt;Row: Vladimir Sorokin, The Queue, 263, Satire&gt;]
+
+# rows, in turn, act like dictionaries
+&gt;&gt;&gt; row = table[1]
+&gt;&gt;&gt; print row['Author']
+James Joyce
+
+# transpose a table
+&gt;&gt;&gt; t2 = table.transpose()
+&gt;&gt;&gt; list(t2)
+[&lt;Row: Best Book, Malone Muert, Ulysses, Mezannine, The Queue&gt;,
+ &lt;Row: Number of Pages, 120, 644, 150, 263&gt;,
+ &lt;Row: Style, Modernism, Modernism, Minimalism, Satire&gt;]
+
+&gt;&gt;&gt; t2.columns
+['Author',
+ 'Samuel Beckett',
+ 'James Joyce',
+ 'Nicholson Baker',
+ 'Vladimir Sorokin']
+
+# sort rows
+&gt;&gt;&gt; table.sort('Author')
+&gt;&gt;&gt; table.rows
+[&lt;Row: James Joyce, Ulysses, 644, Modernism&gt;,
+ &lt;Row: Nicholson Baker, Mezannine, 150, Minimalism&gt;,
+ &lt;Row: Samuel Beckett, Malone Muert, 120, Modernism&gt;,
+ &lt;Row: Vladimir Sorokin, The Queue, 263, Satire&gt;]
+
+# sorting is stored
+table.options['sorted_by']
+{'Author': {'reverse': False}}
+
+# which is handy because...
+
+# tables can also be faceted (and options are copied to new tables)
+&gt;&gt;&gt; for t in table.facet_by('Style'):
+...     print t.faceted_on
+...     t.table
+Minimalism
+[['Nicholson Baker', 'Mezannine', '150', 'Minimalism']]
+Modernism
+[['Samuel Beckett', 'Malone Muert', '120', 'Modernism'],
+ ['James Joyce', 'Ulysses', '644', 'Modernism']]
+Satire
+[['Vladimir Sorokin', 'The Queue', '263', 'Satire']]
+</code></pre>
+
+<p>Here's an <a href="https://gist.github.com/765321">advanced example</a> that uses faceting and filtering to produce aggregates from <a href="https://spreadsheets.google.com/ccc?key=0AprNP7zjIYS1dG5wbVJpWTVacWpUaUh5VHUxMk1wTEE&amp;hl=en&amp;authkey=CJfB5MYP">this spreadsheet</a> (extracted from the New York Times Congress API).</p>
+
+<h2>Formatting</h2>
+
+<p>Filters are just functions that take a value and some number of positional arguments.
+New filters can be registered with the included Formatter class.</p>
+
+<pre><code>&gt;&gt;&gt; from table_fu.formatting import Formatter
+&gt;&gt;&gt; format = Formatter()
+&gt;&gt;&gt; def capitalize(value, *args):
+...     return str(value).capitalize()
+&gt;&gt;&gt; format.register(capitalize)
+&gt;&gt;&gt; print format('foo', 'capitalize')
+Foo
+</code></pre>
+
+<p>Cells can be formatted according to rules of the table (which carry over if the table is faceted):</p>
+
+<pre><code>&gt;&gt;&gt; table = TableFu(open('tests/sites.csv'))
+&gt;&gt;&gt; table.columns
+['Name', 'URL', 'About']
+&gt;&gt;&gt; table.formatting = {
+... 'Name': {'filter': 'link', 'args': ['URL']}
+... }
+&gt;&gt;&gt; print table[0]['Name']
+&lt;a href="http://www.chrisamico.com" title="ChrisAmico.com"&gt;ChrisAmico.com&lt;/a&gt;
+</code></pre>
+
+<h2>HTML Output</h2>
+
+<p>TableFu can output an HTML table, using formatting you specify:</p>
+
+<pre><code>&gt;&gt;&gt; table = TableFu(open('tests/sites.csv'))
+&gt;&gt;&gt; table.columns
+['Name', 'URL', 'About']
+&gt;&gt;&gt; table.formatting = {'Name': {'filter: 'link', 'args': ['URL']}}
+&gt;&gt;&gt; table.columns = 'Name', 'About'
+&gt;&gt;&gt; print table.html()
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;About&lt;/th&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr id="row0" class="row even"&gt;&lt;td class="datum"&gt;&lt;a href="http://www.chrisamico.com" title="ChrisAmico.com"&gt;ChrisAmico.com&lt;/a&gt;&lt;/td&gt;&lt;td class="datum"&gt;My personal site and blog&lt;/td&gt;&lt;/tr&gt;
+&lt;tr id="row1" class="row odd"&gt;&lt;td class="datum"&gt;&lt;a href="http://www.propublica.org" title="ProPublica"&gt;ProPublica&lt;/a&gt;&lt;/td&gt;&lt;td class="datum"&gt;Builders of the Ruby version of this library&lt;/td&gt;&lt;/tr&gt;
+&lt;tr id="row2" class="row even"&gt;&lt;td class="datum"&gt;&lt;a href="http://www.pbs.org/newshour" title="PBS NewsHour"&gt;PBS NewsHour&lt;/a&gt;&lt;/td&gt;&lt;td class="datum"&gt;Where I spend my days&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/eyeseast">eyeseast</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
