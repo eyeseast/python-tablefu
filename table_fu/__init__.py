@@ -68,7 +68,10 @@ class TableFu(object):
         parsed by Python's csv module (using csv.reader)
         """
         if hasattr(table, 'next'): # for file-like objects
-            reader = csv.reader(table)
+            csv_options = {}
+            if 'dialect' in options:
+                csv_options['dialect'] = options.pop('dialect')
+            reader = csv.reader(table, **csv_options)
             self.table = [row for row in reader]
         else:
             self.table = table
